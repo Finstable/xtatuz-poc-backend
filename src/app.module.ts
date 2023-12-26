@@ -5,6 +5,16 @@ import { UsersModule } from './module/users/users.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import configuration from './config/configuration';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { PropertiesModule } from './module/properties/properties.module';
+import { ProfileModule } from './module/profile/profile.module';
+import { SellerModule } from './module/seller/seller.module';
+import { RoleModule } from './module/role/role.module';
+import { PremissionModule } from './module/premission/premission.module';
+import { UserRefferalModule } from './module/user-refferal/user-refferal.module';
+import { TokenModule } from './module/token/token.module';
+import { MemberModule } from './module/member/member.module';
+import { PropertyFeatureModule } from './module/property-feature/property-feature.module';
+import { CategoryModule } from './module/category/category.module';
 
 @Module({
   imports: [
@@ -21,6 +31,16 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       load: [configuration],
     }),
     UsersModule,
+    PropertiesModule,
+    ProfileModule,
+    SellerModule,
+    RoleModule,
+    PremissionModule,
+    UserRefferalModule,
+    TokenModule,
+    MemberModule,
+    PropertyFeatureModule,
+    CategoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],
