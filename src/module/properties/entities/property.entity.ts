@@ -1,4 +1,3 @@
-import { Category } from 'src/module/category/entities/category.entity';
 import { Member } from 'src/module/member/entities/member.entity';
 import { PropertyFeature } from 'src/module/property-feature/entities/property-feature.entity';
 import { Token } from 'src/module/token/entities/token.entity';
@@ -101,9 +100,8 @@ export class Property extends BaseEntity {
   @Column({ name: 'token_price', nullable: true })
   tokenPrice: number;
 
-  @ManyToOne(() => Category, (category) => category.property) // specify inverse side as a second parameter
-  @JoinColumn({ name: 'category_id', referencedColumnName: 'id' })
-  category: Category;
+  @Column()
+  category: string;
 
   @OneToMany(() => PropertyFeature, (id) => id.property)
   propertyFeatures: PropertyFeature[];

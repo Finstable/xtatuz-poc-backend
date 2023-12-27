@@ -10,8 +10,3 @@ export enum PropertyConstructStatus {
   COMPLETE = 'complete',
   INCOMPLETE = 'incomplete',
 }
-
-export enum CategoryStatus {
-  ACTIVE = 'active',
-  INACTIVE = 'inactive',
-}

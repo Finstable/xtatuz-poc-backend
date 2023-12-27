@@ -2,7 +2,6 @@ import { Profile } from 'src/module/profile/entities/profile.entity';
 import { Property } from 'src/module/properties/entities/property.entity';
 import { Role } from 'src/module/role/entities/role.entity';
 import { Seller } from 'src/module/seller/entities/seller.entity';
-import { UserRefferal } from 'src/module/user-refferal/entities/user-refferal.entity';
 import { BaseEntity } from 'src/shared/models/base.entity';
 import {
   Entity,
@@ -11,7 +10,6 @@ import {
   JoinColumn,
   ManyToMany,
   JoinTable,
-  OneToMany,
 } from 'typeorm';
 
 @Entity({ name: 'users' })
@@ -30,9 +28,6 @@ export class User extends BaseEntity {
   @ManyToMany(() => Role)
   @JoinTable({ name: 'user_role' })
   role: Role[];
-
-  @OneToMany(() => UserRefferal, (userRefferal) => userRefferal.user)
-  userRefferal: UserRefferal[];
 
   @ManyToMany(() => Property, (property) => property.users)
   properties?: Property[];
