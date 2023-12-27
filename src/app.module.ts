@@ -13,6 +13,7 @@ import { PremissionModule } from './module/premission/premission.module';
 import { TokenModule } from './module/token/token.module';
 import { MemberModule } from './module/member/member.module';
 import { PropertyFeatureModule } from './module/property-feature/property-feature.module';
+import { AuthModule } from './module/auth/auth.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { PropertyFeatureModule } from './module/property-feature/property-featur
     TokenModule,
     MemberModule,
     PropertyFeatureModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
