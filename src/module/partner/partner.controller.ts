@@ -6,10 +6,12 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { PartnerService } from './partner.service';
 import { CreatePartnerDto } from './dto/create-partner.dto';
 import { UpdatePartnerDto } from './dto/update-partner.dto';
+import { AuthGuard } from '../auth/guard/auth.guard';
 
 @Controller('partner')
 export class PartnerController {
@@ -20,6 +22,7 @@ export class PartnerController {
     return this.partnerService.create(createPartnerDto);
   }
 
+  @UseGuards(AuthGuard)
   @Get('/listPartners')
   findAll() {
     return this.partnerService.findAll();
