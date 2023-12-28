@@ -1,4 +1,4 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 
@@ -11,8 +11,8 @@ export class AuthController {
     return this.authService.getChallengeMessage();
   }
 
-  @Get('/login')
-  login(@Query() loginDto: LoginDto) {
+  @Post('/login')
+  login(@Body() loginDto: LoginDto) {
     return this.authService.login(loginDto.signatures);
   }
 }
