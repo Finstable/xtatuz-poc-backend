@@ -6,10 +6,9 @@ import { LoginDto } from './dto/login.dto';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Get('/signMessage')
-  signMessage() {
-    //for test API login
-    return this.authService.signMessage();
+  @Get('/getChallengeMessage')
+  getChallengeMessage() {
+    return this.authService.getChallengeMessage();
   }
 
   @Get('/login')

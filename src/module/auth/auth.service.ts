@@ -10,39 +10,12 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  // Sign the message
-  async signMessage() {
-    // Your Ethereum private key
-    const privateKey = ''; //private key
-
-    // Initialize a provider (in this case, using Infura)
-    const provider = new ethers.InfuraProvider(
-      'goerli',
-      '', //wallet Address
-    );
-
-    // Create a wallet instance from the private key and provider
-    const wallet = new ethers.Wallet(privateKey, provider);
-
-    // Message to sign
-    const message = 'Hello';
-    try {
-      const signature = await wallet.signMessage(message);
-      console.log('Signature:', signature);
-
-      return signature;
-    } catch (error) {
-      console.error('Error signing message:', error);
-    }
-  }
-
   getChallengeMessage(): { message: string } {
     return { message: 'SIGN_IN_TO_XTATUZ' };
   }
 
   async login(signature: string) {
     const { message } = this.getChallengeMessage();
-    console.log(message, signature);
 
     try {
       const decodedAddress = ethers
