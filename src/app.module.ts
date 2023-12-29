@@ -14,6 +14,8 @@ import { TokenModule } from './module/token/token.module';
 import { MemberModule } from './module/member/member.module';
 import { PropertyFeatureModule } from './module/property-feature/property-feature.module';
 import { AuthModule } from './module/auth/auth.module';
+import { PartnerModule } from './module/partner/partner.module';
+import { ChainsModule } from './module/chains/chains.module';
 
 @Module({
   imports: [
@@ -39,6 +41,8 @@ import { AuthModule } from './module/auth/auth.module';
     MemberModule,
     PropertyFeatureModule,
     AuthModule,
+    PartnerModule,
+    ChainsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

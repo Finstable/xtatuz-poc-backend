@@ -1,43 +1,34 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Chain } from 'src/module/chains/entities/chain.entity';
+import { BaseEntity } from 'src/shared/models/base.entity';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 
 @Entity()
-export class Token {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @Column()
-  address: string;
+export class Token extends BaseEntity {
+  @Column({ name: 'token_address' })
+  tokenAddress: string;
 
   @Column()
   name: string;
 
   @Column()
-  symbol: string;
+  type: string;
 
   @Column()
+  symbol: string;
+
+  @Column({ name: 'image_url' })
   imageUrl: string;
 
   @Column({ default: false })
   isActive: boolean;
 
   @Column()
-  chainId: number;
-
-  @Column()
   decimal: number;
 
-  @Column()
-  minimum: number;
-
-  @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
-  createdAt: Date;
-
-  @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
-  updatedAt: Date;
+  @ManyToOne(() => Chain, (chain) => chain, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  @JoinColumn({ name: 'chain_id', referencedColumnName: 'id' })
+  chain: Chain;
 }
