@@ -38,7 +38,6 @@ export class PropertiesService {
       erc20,
       signer,
     );
-    console.log('11112');
 
     return new Promise(async (resolve, reject) => {
       //to do filter by ownerAddress

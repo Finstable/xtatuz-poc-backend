@@ -27,15 +27,11 @@ export class PropertiesController {
 
   @Get('/eventLog')
   eventLog(@Query() eventLogDto: EventLogDto) {
-    console.log('in to eventLog', eventLogDto.merchantAddress);
     return this.propertiesService.getEventLog(eventLogDto.merchantAddress);
   }
 
   @Get('/historyEventLog')
   historyEventLog(@Query() eventLogDto: HistoryEventLogDto) {
-    console.log('in to eventLog', eventLogDto.merchantAddress);
-    console.log('in to eventLog', eventLogDto.fromBlock);
-    console.log('in to eventLog', eventLogDto.toBlock);
     return this.propertiesService.getHistoryEvent(
       eventLogDto.merchantAddress,
       eventLogDto.fromBlock,
