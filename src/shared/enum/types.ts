@@ -1,7 +1,6 @@
 export enum PropertyStatus {
   WAITING = 'waiting',
   DEPLOYED = 'deployed',
-  SELLING = 'selling',
   REFUND = 'refund',
   SUCCESS = 'success',
 }
