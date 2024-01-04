@@ -1,6 +1,12 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreatePropertyDto } from './create-property.dto';
-import { IsArray, IsNumber, IsOptional, IsString } from 'class-validator';
+import {
+  IsArray,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { PropertyStatus } from 'src/shared/enum/types';
 
 export class UpdatePropertyDto extends PartialType(CreatePropertyDto) {
@@ -134,4 +140,10 @@ export class HistoryEventLogDto {
 
   @IsOptional()
   toBlock: number;
+}
+
+export class UpdateStatusDTO {
+  @IsString()
+  @IsNotEmpty()
+  status: string;
 }

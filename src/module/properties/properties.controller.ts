@@ -14,7 +14,7 @@ import {
   EventLogDto,
   HistoryEventLogDto,
 } from './dto/create-property.dto';
-import { UpdatePropertyDto } from './dto/update-property.dto';
+import { UpdatePropertyDto, UpdateStatusDTO } from './dto/update-property.dto';
 
 @Controller('properties')
 export class PropertiesController {
@@ -32,6 +32,11 @@ export class PropertiesController {
   ) {
     console.log('id', id);
     return this.propertiesService.update(+id, updatePropertyDto);
+  }
+
+  @Patch(':id/updateStatusProperty')
+  updateStatusProperty(@Param('id') id: string, @Body() body: UpdateStatusDTO) {
+    return this.propertiesService.updateStatusProperty(+id, body);
   }
 
   @Get('/eventLog')

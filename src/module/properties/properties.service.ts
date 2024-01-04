@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CreatePropertyDto } from './dto/create-property.dto';
-import { UpdatePropertyDto } from './dto/update-property.dto';
+import { UpdatePropertyDto, UpdateStatusDTO } from './dto/update-property.dto';
 import { ContractEventPayload, EventLog, Log, ethers } from 'ethers';
 import { erc20 } from 'src/constants/erc20';
 import { ConfigService } from '@nestjs/config';
@@ -266,6 +266,53 @@ export class PropertiesService {
       .execute();
 
     return `This action updates a #${id} property`;
+  }
+
+  async updateStatusProperty(id: number, status: UpdateStatusDTO) {
+    const data = { status };
+    const property = await this.propertyRepository.find({ where: { id } });
+    if (!property) {
+      throw new Error('property not found');
+    }
+
+    if (data.status.status === PropertyStatus.DEPLOYED) {
+      await this.propertyRepository
+        .createQueryBuilder()
+        .update()
+        .set({
+          status: PropertyStatus.DEPLOYED,
+        })
+        .where('id = :id', { id })
+        .execute();
+    } else if (data.status.status === PropertyStatus.REFUND) {
+      await this.propertyRepository
+        .createQueryBuilder()
+        .update()
+        .set({
+          status: PropertyStatus.REFUND,
+        })
+        .where('id = :id', { id })
+        .execute();
+    } else if (data.status.status === PropertyStatus.SUCCESS) {
+      await this.propertyRepository
+        .createQueryBuilder()
+        .update()
+        .set({
+          status: PropertyStatus.SUCCESS,
+        })
+        .where('id = :id', { id })
+        .execute();
+    } else if (data.status.status === PropertyStatus.WAITING) {
+      await this.propertyRepository
+        .createQueryBuilder()
+        .update()
+        .set({
+          status: PropertyStatus.WAITING,
+        })
+        .where('id = :id', { id })
+        .execute();
+    }
+    return { message: `Property status is ${status}, update success!` };
   }
 
   remove(id: number) {
