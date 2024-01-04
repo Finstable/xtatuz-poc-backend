@@ -8,7 +8,7 @@ import {
 
 export abstract class BaseEntity extends BaseEntityTypeOrm {
   @PrimaryGeneratedColumn()
-  id: string;
+  id: number;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
   createdAt?: Date;

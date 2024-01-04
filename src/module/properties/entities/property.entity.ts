@@ -2,7 +2,7 @@ import { Member } from 'src/module/member/entities/member.entity';
 import { PropertyFeature } from 'src/module/property-feature/entities/property-feature.entity';
 import { Token } from 'src/module/token/entities/token.entity';
 import { User } from 'src/module/users/entities/user.entity';
-import { PropertyConstructStatus, PropertyStatus } from 'src/shared/enum/types';
+import { PropertyStatus } from 'src/shared/enum/types';
 import { BaseEntity } from 'src/shared/models/base.entity';
 import {
   Column,
@@ -12,7 +12,10 @@ import {
   ManyToMany,
   ManyToOne,
   OneToMany,
+  OneToOne,
 } from 'typeorm';
+import { Financial } from './financial.entity';
+import { NearLocation } from './near_location.entity';
 
 @Entity({ name: 'property' })
 export class Property extends BaseEntity {
@@ -28,8 +31,15 @@ export class Property extends BaseEntity {
   })
   img: string[];
 
-  @Column({ name: 'amount_sold', nullable: true })
-  amountSold: string;
+  @Column()
+  issuer: string;
+
+  @Column({ name: 'underlying_asset', nullable: true })
+  underlyingAsset: string;
+
+  @OneToOne(() => Financial, (financial) => financial.property)
+  @JoinColumn({ name: 'financial_id', referencedColumnName: 'id' })
+  financial: Financial;
 
   @Column({
     type: 'enum',
@@ -37,41 +47,20 @@ export class Property extends BaseEntity {
   })
   status: PropertyStatus;
 
-  @Column({
-    type: 'enum',
-    enum: PropertyConstructStatus,
-    nullable: true,
-    default: PropertyConstructStatus.INCOMPLETE,
-    name: 'construction_status',
-  })
-  constructionStatus: PropertyConstructStatus;
+  @Column({ name: 'total_raise', nullable: true })
+  totalRaise: number;
 
   @Column({ nullable: true, type: 'timestamptz', name: 'start_presale' })
   startPresale: Date;
 
-  @Column({ nullable: true, type: 'timestamptz' })
-  deadline: Date;
-
-  @Column({ name: 'favorite', nullable: true })
-  favorite: number;
-
-  @Column({ name: 'Owners', nullable: true })
-  Owners: string;
-
-  @Column({ nullable: true })
-  fragment: number;
+  @Column({ name: 'total_supply', nullable: true })
+  totalSupply: number;
 
   @Column({ name: 'link_doc', nullable: true })
   linkDoc: string;
 
-  @Column({ name: 'about', nullable: true })
-  about: string;
-
-  @Column({ name: 'start_building', nullable: true, type: 'timestamptz' })
-  startBuilding: Date;
-
-  @Column({ name: 'end_building', nullable: true, type: 'timestamptz' })
-  endBuilding: Date;
+  @Column({ name: 'detail', nullable: true })
+  detail: string;
 
   @Column({ type: 'decimal', name: 'latitude', nullable: true })
   latitude: number;
@@ -81,6 +70,9 @@ export class Property extends BaseEntity {
 
   @Column({ name: 'location_name', nullable: true })
   locationName: string;
+
+  @OneToMany(() => NearLocation, (id) => id.property)
+  nearLocation: NearLocation[];
 
   @Column({ name: 'onchain_id', nullable: true })
   onchainId: string;
@@ -97,7 +89,7 @@ export class Property extends BaseEntity {
   @Column({ name: 'country', nullable: true })
   country: string;
 
-  @Column({ name: 'token_price', nullable: true })
+  @Column({ name: 'token_price', nullable: true }) //price_per_token
   tokenPrice: number;
 
   @Column()
