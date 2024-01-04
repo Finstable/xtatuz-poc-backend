@@ -92,9 +92,6 @@ export class Property extends BaseEntity {
   @Column({ name: 'token_price', nullable: true }) //price_per_token
   tokenPrice: number;
 
-  @Column()
-  category: string;
-
   @OneToMany(() => PropertyFeature, (id) => id.property)
   propertyFeatures: PropertyFeature[];
 

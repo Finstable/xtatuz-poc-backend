@@ -1,9 +1,15 @@
-import { IsArray, IsNumber, IsOptional, IsString } from 'class-validator';
+import {
+  IsArray,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { PropertyStatus } from 'src/shared/enum/types';
 
 export class CreatePropertyDto {
   @IsString()
-  @IsOptional()
+  @IsNotEmpty()
   property_name: string;
 
   @IsString()
@@ -15,11 +21,11 @@ export class CreatePropertyDto {
   img: string[];
 
   @IsString()
-  @IsOptional()
+  @IsNotEmpty()
   issuer: string;
 
   @IsString()
-  @IsOptional()
+  @IsNotEmpty()
   underlying_asset: string;
 
   @IsOptional()
@@ -37,7 +43,7 @@ export class CreatePropertyDto {
   start_presale: Date;
 
   @IsNumber()
-  @IsOptional()
+  @IsNotEmpty()
   total_supply: number;
 
   @IsString()
@@ -48,14 +54,14 @@ export class CreatePropertyDto {
   @IsOptional()
   detail: string;
 
-  @IsOptional()
+  @IsNotEmpty()
   longitude: number;
 
-  @IsOptional()
+  @IsNotEmpty()
   latitude: number;
 
   @IsString()
-  @IsOptional()
+  @IsNotEmpty()
   location_name: string;
 
   @IsOptional()
@@ -82,18 +88,14 @@ export class CreatePropertyDto {
   country: string;
 
   @IsNumber()
-  @IsOptional()
+  @IsNotEmpty()
   token_price: number;
 
-  @IsString()
-  @IsOptional()
-  category: string;
-
-  @IsOptional()
+  @IsNotEmpty()
   property_features: PropertyFeatures[];
 
   @IsString()
-  @IsOptional()
+  @IsNotEmpty()
   token_address: string;
 }
 

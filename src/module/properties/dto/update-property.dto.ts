@@ -87,10 +87,6 @@ export class UpdatePropertyDto extends PartialType(CreatePropertyDto) {
   @IsOptional()
   token_price: number;
 
-  @IsString()
-  @IsOptional()
-  category: string;
-
   @IsOptional()
   property_features: PropertyFeatures[];
 

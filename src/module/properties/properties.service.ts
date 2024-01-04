@@ -51,7 +51,6 @@ export class PropertiesService {
       city,
       country,
       token_price,
-      category,
       property_features,
       token_address,
     } = createPropertyDto;
@@ -75,6 +74,12 @@ export class PropertiesService {
       },
     });
 
+    if (!token) {
+      throw new Error(
+        `can not create property whit token Address ${token_address}`,
+      );
+    }
+
     const createProperty = this.propertyRepository.create({
       propertyName: property_name,
       userId: user_id,
@@ -97,7 +102,6 @@ export class PropertiesService {
       city: city,
       country: country,
       tokenPrice: token_price,
-      category: category,
       token: token,
     });
 
@@ -162,7 +166,6 @@ export class PropertiesService {
       city,
       country,
       token_price,
-      category,
       property_features,
       token_address,
     } = updatePropertyDto;
@@ -195,6 +198,11 @@ export class PropertiesService {
           tokenAddress: token_address,
         },
       });
+      if (!token) {
+        throw new Error(
+          `can not update property whit token Address ${token_address}`,
+        );
+      }
       await this.propertyRepository
         .createQueryBuilder()
         .update()
@@ -253,7 +261,6 @@ export class PropertiesService {
         city: city,
         country: country,
         tokenPrice: token_price,
-        category: category,
       })
       .where('id = :id', { id })
       .execute();
