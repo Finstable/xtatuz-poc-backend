@@ -12,6 +12,12 @@ import { Financial } from './entities/financial.entity';
 import { NearLocation } from './entities/near_location.entity';
 import { Token } from '../token/entities/token.entity';
 import { PropertyFeature } from '../property-feature/entities/property-feature.entity';
+import {
+  IPaginateOptions,
+  IPaginationMeta,
+  paginate,
+} from 'src/shared/utils/pagination';
+import { QueryFilterProperty } from './dto/query-filter.dto';
 
 @Injectable()
 export class PropertiesService {
@@ -137,8 +143,42 @@ export class PropertiesService {
     return properties;
   }
 
-  findAll() {
-    return `This action returns all properties`;
+  async listProperties(
+    options: IPaginateOptions,
+    queryFilterProperty: QueryFilterProperty,
+  ): Promise<IPaginationMeta<Property>> {
+    const propertyBuilder =
+      await this.propertyRepository.createQueryBuilder('property');
+
+    if (queryFilterProperty.user_id) {
+      propertyBuilder.andWhere('property.userId = :userId', {
+        userId: queryFilterProperty.user_id,
+      });
+    }
+
+    if (queryFilterProperty.property_construct_status) {
+      propertyBuilder.andWhere(
+        'property.propertyConstructStatus = :propertyConstructStatus',
+        {
+          propertyConstructStatus:
+            queryFilterProperty.property_construct_status,
+        },
+      );
+    }
+
+    if (queryFilterProperty.type) {
+      propertyBuilder.andWhere('property.type = :type', {
+        type: queryFilterProperty.type,
+      });
+    }
+
+    if (queryFilterProperty.status) {
+      propertyBuilder.andWhere('property.status = :status', {
+        status: queryFilterProperty.status,
+      });
+    }
+
+    return paginate<Property>(propertyBuilder, options);
   }
 
   findOne(id: number) {
@@ -220,7 +260,7 @@ export class PropertiesService {
       for (const feature of property_features) {
         await this.propertyFeatureRepository
           .createQueryBuilder('property_feature')
-          .where('property_id = :id', { id: id })
+          .where('propertyId = :id', { id: id })
           .andWhere('id = :ids', { ids: feature.id })
           .update()
           .set({ key: feature.key, value: feature.value, unit: feature.unit })
@@ -232,7 +272,7 @@ export class PropertiesService {
       for (const location of near_location) {
         await this.nearLocationRepository
           .createQueryBuilder()
-          .where('property_id = :id', { id: id })
+          .where('propertyId = :id', { id: id })
           .andWhere('id = :ids', { ids: location.id })
           .update()
           .set({
