@@ -8,10 +8,10 @@ export class Chain {
   @PrimaryGeneratedColumn()
   id: string;
 
-  @Column({ name: 'chain_name' })
+  @Column({ name: 'chainName' })
   chainName: string;
 
-  @Column({ name: 'chain_id' })
+  @Column({ name: 'chainId' })
   chainId: string;
 
   @Column({ name: 'rpc' })
