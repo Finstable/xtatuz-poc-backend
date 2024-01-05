@@ -93,7 +93,7 @@ export class CreatePropertyDto {
 
   @IsString()
   @IsOptional()
-  propertyConstructStatus: PropertyConstructStatus;
+  property_construct_status: PropertyConstructStatus;
 
   @IsNumber()
   @IsNotEmpty()

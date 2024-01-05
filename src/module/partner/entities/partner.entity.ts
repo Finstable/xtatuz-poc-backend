@@ -10,6 +10,6 @@ export class Partner {
   @Column()
   name: string;
 
-  @Column({ name: 'image_url' })
+  @Column({ name: 'imageUrl' })
   imageUrl: string;
 }

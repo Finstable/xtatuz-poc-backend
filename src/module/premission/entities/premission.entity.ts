@@ -16,19 +16,19 @@ export class Permission {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ name: 'permission_name', nullable: true })
+  @Column({ name: 'permissionName', nullable: true })
   permissionName: string;
 
   @ManyToOne(() => Role, (role) => role, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
-  @JoinColumn({ name: 'role_id', referencedColumnName: 'id' })
+  @JoinColumn({ name: 'roleId', referencedColumnName: 'id' })
   role: Role;
 
-  @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
+  @CreateDateColumn({ name: 'createdAt', type: 'timestamptz' })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
+  @UpdateDateColumn({ name: 'updatedAt', type: 'timestamptz' })
   updatedAt: Date;
 }

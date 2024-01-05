@@ -21,6 +21,6 @@ export class Member {
   propertiesId: string;
 
   @ManyToOne(() => Property, (property) => property.id)
-  @JoinColumn({ name: 'property_id', referencedColumnName: 'id' })
+  @JoinColumn({ name: 'propertyId', referencedColumnName: 'id' })
   property: Property;
 }

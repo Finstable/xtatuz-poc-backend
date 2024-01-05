@@ -26,7 +26,7 @@ export class Property extends BaseEntity {
   @Column({ nullable: true })
   propertyName: string;
 
-  @Column({ name: 'user_id', nullable: true })
+  @Column({ name: 'userId', nullable: true })
   userId: string;
 
   @Column('text', {
@@ -38,11 +38,11 @@ export class Property extends BaseEntity {
   @Column({ nullable: true })
   issuer: string;
 
-  @Column({ name: 'underlying_asset', nullable: true })
+  @Column({ name: 'underlyingAsset', nullable: true })
   underlyingAsset: string;
 
   @OneToOne(() => Financial, (financial) => financial.property)
-  @JoinColumn({ name: 'financial_id', referencedColumnName: 'id' })
+  @JoinColumn({ name: 'financialId', referencedColumnName: 'id' })
   financial: Financial;
 
   @Column({
@@ -51,16 +51,16 @@ export class Property extends BaseEntity {
   })
   status: PropertyStatus;
 
-  @Column({ name: 'total_raise', nullable: true })
+  @Column({ name: 'totalRaise', nullable: true })
   totalRaise: number;
 
-  @Column({ nullable: true, type: 'timestamptz', name: 'start_presale' })
+  @Column({ nullable: true, type: 'timestamptz', name: 'startPresale' })
   startPresale: Date;
 
-  @Column({ name: 'total_supply', nullable: true })
+  @Column({ name: 'totalSupply', nullable: true })
   totalSupply: number;
 
-  @Column({ name: 'link_doc', nullable: true })
+  @Column({ name: 'linkDoc', nullable: true })
   linkDoc: string;
 
   @Column({ name: 'detail', nullable: true })
@@ -72,19 +72,19 @@ export class Property extends BaseEntity {
   @Column({ type: 'decimal', name: 'longitude', nullable: true })
   longitude: number;
 
-  @Column({ name: 'location_name', nullable: true })
+  @Column({ name: 'locationName', nullable: true })
   locationName: string;
 
   @OneToMany(() => NearLocation, (id) => id.property)
   nearLocation: NearLocation[];
 
-  @Column({ name: 'onchain_id', nullable: true })
+  @Column({ name: 'onchainId', nullable: true })
   onchainId: string;
 
   @Column({ nullable: true })
   note: string;
 
-  @Column({ name: 'address_property', nullable: true })
+  @Column({ name: 'addressProperty', nullable: true })
   addressProperty: string;
 
   @Column({ name: 'city', nullable: true })
@@ -99,14 +99,14 @@ export class Property extends BaseEntity {
   @Column({ nullable: true })
   propertyConstructStatus: PropertyConstructStatus;
 
-  @Column({ name: 'token_price', nullable: true }) //price_per_token
+  @Column({ name: 'tokenPrice', nullable: true }) //price_per_token
   tokenPrice: number;
 
   @OneToMany(() => PropertyFeature, (id) => id.property)
   propertyFeatures: PropertyFeature[];
 
   @ManyToOne(() => Token)
-  @JoinColumn({ name: 'token_id', referencedColumnName: 'id' })
+  @JoinColumn({ name: 'tokenId', referencedColumnName: 'id' })
   token: Token;
 
   @OneToMany(() => Member, (id) => id.property)
@@ -118,13 +118,13 @@ export class Property extends BaseEntity {
     { onDelete: 'NO ACTION', onUpdate: 'NO ACTION' },
   )
   @JoinTable({
-    name: 'propperty_subscribe',
+    name: 'proppertySubscribe',
     joinColumn: {
-      name: 'property_id',
+      name: 'propertyId',
       referencedColumnName: 'id',
     },
     inverseJoinColumn: {
-      name: 'user_id',
+      name: 'userId',
       referencedColumnName: 'id',
     },
   })

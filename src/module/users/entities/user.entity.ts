@@ -14,19 +14,19 @@ import {
 
 @Entity({ name: 'users' })
 export class User extends BaseEntity {
-  @Column({ name: 'wallet_address' })
+  @Column({ name: 'walletAddress' })
   walletAddress: string;
 
   @OneToOne(() => Profile, (profile) => profile.user)
-  @JoinColumn({ name: 'profile_id', referencedColumnName: 'id' })
+  @JoinColumn({ name: 'profileId', referencedColumnName: 'id' })
   profile: Profile;
 
   @OneToOne(() => Seller, (seller) => seller.user)
-  @JoinColumn({ name: 'seller_id', referencedColumnName: 'id' })
+  @JoinColumn({ name: 'sellerId', referencedColumnName: 'id' })
   seller: Seller;
 
   @ManyToMany(() => Role)
-  @JoinTable({ name: 'user_role' })
+  @JoinTable({ name: 'userRole' })
   role: Role[];
 
   @ManyToMany(() => Property, (property) => property.users)

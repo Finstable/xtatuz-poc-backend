@@ -51,7 +51,7 @@ export class PropertiesService {
       city,
       country,
       type,
-      propertyConstructStatus,
+      property_construct_status,
       token_price,
       property_features,
       token_id,
@@ -102,7 +102,7 @@ export class PropertiesService {
       city: city,
       country: country,
       type: type,
-      propertyConstructStatus: propertyConstructStatus,
+      propertyConstructStatus: property_construct_status,
       tokenPrice: token_price,
       token: token,
     });
@@ -168,7 +168,7 @@ export class PropertiesService {
       city,
       country,
       type,
-      propertyConstructStatus,
+      property_construct_status,
       token_price,
       property_features,
       token_id,
@@ -267,7 +267,7 @@ export class PropertiesService {
         city: city,
         country: country,
         type: type,
-        propertyConstructStatus: propertyConstructStatus,
+        propertyConstructStatus: property_construct_status,
         tokenPrice: token_price,
       })
       .where('id = :id', { id })

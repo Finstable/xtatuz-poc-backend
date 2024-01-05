@@ -99,7 +99,7 @@ export class UpdatePropertyDto extends PartialType(CreatePropertyDto) {
 
   @IsString()
   @IsOptional()
-  propertyConstructStatus: PropertyConstructStatus;
+  property_construct_status: PropertyConstructStatus;
 
   @IsNumber()
   @IsOptional()

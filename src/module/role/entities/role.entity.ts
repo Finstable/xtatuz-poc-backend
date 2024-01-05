@@ -16,13 +16,13 @@ export class Role {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ name: 'role_name', nullable: true })
+  @Column({ name: 'roleName', nullable: true })
   roleName: string;
 
-  @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
+  @CreateDateColumn({ name: 'createdAt', type: 'timestamptz' })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
+  @UpdateDateColumn({ name: 'createdAt', type: 'timestamptz' })
   updatedAt: Date;
 
   @OneToMany(() => Permission, (premission) => premission.role, {

@@ -4,7 +4,7 @@ import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 
 @Entity()
 export class Token extends BaseEntity {
-  @Column({ name: 'token_address' })
+  @Column({ name: 'tokenAddress' })
   tokenAddress: string;
 
   @Column()
@@ -16,7 +16,7 @@ export class Token extends BaseEntity {
   @Column()
   symbol: string;
 
-  @Column({ name: 'image_url' })
+  @Column({ name: 'imageUrl' })
   imageUrl: string;
 
   @Column({ default: false })
@@ -29,6 +29,6 @@ export class Token extends BaseEntity {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
-  @JoinColumn({ name: 'chain_id', referencedColumnName: 'id' })
+  @JoinColumn({ name: 'chainId', referencedColumnName: 'id' })
   chain: Chain;
 }

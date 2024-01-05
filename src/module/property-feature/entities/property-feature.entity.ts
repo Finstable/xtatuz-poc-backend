@@ -22,6 +22,6 @@ export class PropertyFeature {
   unit: string;
 
   @ManyToOne(() => Property, (property) => property.id) // specify inverse side as a second parameter
-  @JoinColumn({ name: 'property_id', referencedColumnName: 'id' })
+  @JoinColumn({ name: 'propertyId', referencedColumnName: 'id' })
   property: Property;
 }

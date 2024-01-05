@@ -4,7 +4,7 @@ import { Column, Entity, OneToOne } from 'typeorm';
 
 @Entity({ name: 'profile' })
 export class Profile extends BaseEntity {
-  @Column({ name: 'username', nullable: true })
+  @Column({ name: 'userName', nullable: true })
   userName: string;
 
   @Column({ name: 'email', type: 'text', nullable: true })
