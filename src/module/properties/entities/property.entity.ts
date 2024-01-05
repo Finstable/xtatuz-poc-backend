@@ -31,7 +31,7 @@ export class Property extends BaseEntity {
   })
   img: string[];
 
-  @Column()
+  @Column({ nullable: true })
   issuer: string;
 
   @Column({ name: 'underlying_asset', nullable: true })

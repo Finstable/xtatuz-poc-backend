@@ -96,7 +96,7 @@ export class CreatePropertyDto {
 
   @IsString()
   @IsNotEmpty()
-  token_address: string;
+  token_id: number;
 }
 
 interface PropertyFeatures {

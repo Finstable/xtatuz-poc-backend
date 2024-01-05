@@ -96,9 +96,9 @@ export class UpdatePropertyDto extends PartialType(CreatePropertyDto) {
   @IsOptional()
   property_features: PropertyFeatures[];
 
-  @IsString()
+  @IsNumber()
   @IsOptional()
-  token_address: string;
+  token_id: number;
 }
 
 interface PropertyFeatures {

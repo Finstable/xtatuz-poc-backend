@@ -52,7 +52,7 @@ export class PropertiesService {
       country,
       token_price,
       property_features,
-      token_address,
+      token_id,
     } = createPropertyDto;
     const createFinancial = this.financialRepository.create({
       grossRentPerYear: financial.gross_rent_per_year,
@@ -70,14 +70,12 @@ export class PropertiesService {
     // console.log(propertyFinancial.id, 'propertyFinancial');
     const token = await this.tokenRepository.findOne({
       where: {
-        tokenAddress: token_address,
+        id: token_id,
       },
     });
 
     if (!token) {
-      throw new Error(
-        `can not create property whit token Address ${token_address}`,
-      );
+      throw new Error(`can not create property whit token id ${token_id}`);
     }
 
     const createProperty = this.propertyRepository.create({
@@ -167,7 +165,7 @@ export class PropertiesService {
       country,
       token_price,
       property_features,
-      token_address,
+      token_id,
     } = updatePropertyDto;
 
     const property = await this.propertyRepository.find({ where: { id } });
@@ -192,16 +190,14 @@ export class PropertiesService {
         .execute();
     }
 
-    if (token_address) {
+    if (token_id) {
       const token = await this.tokenRepository.findOne({
         where: {
-          tokenAddress: token_address,
+          id: token_id,
         },
       });
       if (!token) {
-        throw new Error(
-          `can not update property whit token Address ${token_address}`,
-        );
+        throw new Error(`can not update property whit token id ${token_id}`);
       }
       await this.propertyRepository
         .createQueryBuilder()
