@@ -7,7 +7,11 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { PropertyStatus } from 'src/shared/enum/types';
+import {
+  PropertyConstructStatus,
+  PropertyStatus,
+  PropertyType,
+} from 'src/shared/enum/types';
 
 export class UpdatePropertyDto extends PartialType(CreatePropertyDto) {
   @IsString()
@@ -88,6 +92,14 @@ export class UpdatePropertyDto extends PartialType(CreatePropertyDto) {
   @IsString()
   @IsOptional()
   country: string;
+
+  @IsString()
+  @IsOptional()
+  type: PropertyType;
+
+  @IsString()
+  @IsOptional()
+  propertyConstructStatus: PropertyConstructStatus;
 
   @IsNumber()
   @IsOptional()

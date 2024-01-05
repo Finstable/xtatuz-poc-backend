@@ -5,7 +5,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { PropertyStatus } from 'src/shared/enum/types';
+import { PropertyConstructStatus, PropertyStatus, PropertyType } from 'src/shared/enum/types';
 
 export class CreatePropertyDto {
   @IsString()
@@ -86,6 +86,14 @@ export class CreatePropertyDto {
   @IsString()
   @IsOptional()
   country: string;
+
+  @IsString()
+  @IsOptional()
+  type: PropertyType;
+
+  @IsString()
+  @IsOptional()
+  propertyConstructStatus: PropertyConstructStatus;
 
   @IsNumber()
   @IsNotEmpty()

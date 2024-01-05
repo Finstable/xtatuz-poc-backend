@@ -2,7 +2,11 @@ import { Member } from 'src/module/member/entities/member.entity';
 import { PropertyFeature } from 'src/module/property-feature/entities/property-feature.entity';
 import { Token } from 'src/module/token/entities/token.entity';
 import { User } from 'src/module/users/entities/user.entity';
-import { PropertyStatus } from 'src/shared/enum/types';
+import {
+  PropertyConstructStatus,
+  PropertyStatus,
+  PropertyType,
+} from 'src/shared/enum/types';
 import { BaseEntity } from 'src/shared/models/base.entity';
 import {
   Column,
@@ -88,6 +92,12 @@ export class Property extends BaseEntity {
 
   @Column({ name: 'country', nullable: true })
   country: string;
+
+  @Column({ nullable: true })
+  type: PropertyType;
+
+  @Column({ nullable: true })
+  propertyConstructStatus: PropertyConstructStatus;
 
   @Column({ name: 'token_price', nullable: true }) //price_per_token
   tokenPrice: number;

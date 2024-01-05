@@ -50,6 +50,8 @@ export class PropertiesService {
       address_property,
       city,
       country,
+      type,
+      propertyConstructStatus,
       token_price,
       property_features,
       token_id,
@@ -99,6 +101,8 @@ export class PropertiesService {
       addressProperty: address_property,
       city: city,
       country: country,
+      type: type,
+      propertyConstructStatus: propertyConstructStatus,
       tokenPrice: token_price,
       token: token,
     });
@@ -163,12 +167,18 @@ export class PropertiesService {
       address_property,
       city,
       country,
+      type,
+      propertyConstructStatus,
       token_price,
       property_features,
       token_id,
     } = updatePropertyDto;
 
-    const property = await this.propertyRepository.find({ where: { id } });
+    const property = await this.propertyRepository.findOne({
+      where: {
+        id: id,
+      },
+    });
     if (!property) {
       throw new Error('property not found');
     }
@@ -256,6 +266,8 @@ export class PropertiesService {
         addressProperty: address_property,
         city: city,
         country: country,
+        type: type,
+        propertyConstructStatus: propertyConstructStatus,
         tokenPrice: token_price,
       })
       .where('id = :id', { id })
@@ -266,7 +278,7 @@ export class PropertiesService {
 
   async updateStatusProperty(id: number, status: UpdateStatusDTO) {
     const data = { status };
-    const property = await this.propertyRepository.find({ where: { id } });
+    const property = await this.propertyRepository.findOne({ where: { id } });
     if (!property) {
       throw new Error('property not found');
     }
