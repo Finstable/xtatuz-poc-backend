@@ -102,10 +102,14 @@ export class CreatePropertyDto {
   @IsString()
   @IsOptional()
 <<<<<<< HEAD
+<<<<<<< HEAD
   property_construct_status: PropertyConstructStatus;
 =======
   propertyConstructStatus: PropertyConstructStatus;
 >>>>>>> b8d7aff (add type and ConstructStatus)
+=======
+  property_construct_status: PropertyConstructStatus;
+>>>>>>> 3492f1e (Fix entity to camelcase)
 
   @IsNumber()
   @IsNotEmpty()
