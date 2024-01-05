@@ -312,7 +312,9 @@ export class PropertiesService {
         .where('id = :id', { id })
         .execute();
     }
-    return { message: `Property status is ${status}, update success!` };
+    return {
+      message: `Property status is ${data.status.status}, update success!`,
+    };
   }
 
   remove(id: number) {
