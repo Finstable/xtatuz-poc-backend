@@ -14,15 +14,29 @@ import {
   EventLogDto,
   HistoryEventLogDto,
 } from './dto/create-property.dto';
-import { UpdatePropertyDto } from './dto/update-property.dto';
+import { UpdatePropertyDto, UpdateStatusDTO } from './dto/update-property.dto';
 
 @Controller('properties')
 export class PropertiesController {
   constructor(private readonly propertiesService: PropertiesService) {}
 
-  @Post()
-  create(@Body() createPropertyDto: CreatePropertyDto) {
+  @Post('/createProperty')
+  createProperty(@Body() createPropertyDto: CreatePropertyDto) {
     return this.propertiesService.create(createPropertyDto);
+  }
+
+  @Patch(':id/updateProperty')
+  update(
+    @Param('id') id: string,
+    @Body() updatePropertyDto: UpdatePropertyDto,
+  ) {
+    console.log('id', id);
+    return this.propertiesService.update(+id, updatePropertyDto);
+  }
+
+  @Patch(':id/updateStatusProperty')
+  updateStatusProperty(@Param('id') id: string, @Body() body: UpdateStatusDTO) {
+    return this.propertiesService.updateStatusProperty(+id, body);
   }
 
   @Get('/eventLog')
@@ -47,14 +61,6 @@ export class PropertiesController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.propertiesService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updatePropertyDto: UpdatePropertyDto,
-  ) {
-    return this.propertiesService.update(+id, updatePropertyDto);
   }
 
   @Delete(':id')

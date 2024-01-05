@@ -8,11 +8,11 @@ import {
 
 export abstract class BaseEntity extends BaseEntityTypeOrm {
   @PrimaryGeneratedColumn()
-  id: string;
+  id: number;
 
-  @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
+  @CreateDateColumn({ name: 'createdAt', type: 'timestamptz' })
   createdAt?: Date;
 
-  @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
+  @UpdateDateColumn({ name: 'updatedAt', type: 'timestamptz' })
   updatedAt?: Date;
 }

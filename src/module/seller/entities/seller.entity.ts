@@ -15,27 +15,27 @@ export class Seller {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ name: 'seller_type', nullable: false })
+  @Column({ name: 'sellerType', nullable: false })
   sellerType: string;
 
   @Column({ name: 'country', nullable: false })
   country: string;
 
-  @Column({ name: 'country_property', nullable: false })
+  @Column({ name: 'countryProperty', nullable: false })
   countryProperty: string;
 
   @Column({ name: 'email', type: 'text', nullable: false })
   email: string;
 
-  @Column({ name: 'mobile_number', type: 'text', nullable: false })
+  @Column({ name: 'mobileNumber', type: 'text', nullable: false })
   mobileNumber: string;
 
   @OneToOne(() => User, (user) => user.seller)
   user: User;
 
-  @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
+  @CreateDateColumn({ name: 'createdAt', type: 'timestamptz' })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
+  @UpdateDateColumn({ name: 'updatedAt', type: 'timestamptz' })
   updatedAt: Date;
 }
