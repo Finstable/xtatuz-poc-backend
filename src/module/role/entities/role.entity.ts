@@ -22,7 +22,7 @@ export class Role {
   @CreateDateColumn({ name: 'createdAt', type: 'timestamptz' })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'createdAt', type: 'timestamptz' })
+  @UpdateDateColumn({ name: 'updatedAt', type: 'timestamptz' })
   updatedAt: Date;
 
   @OneToMany(() => Permission, (premission) => premission.role, {
