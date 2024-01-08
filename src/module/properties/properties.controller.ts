@@ -15,6 +15,8 @@ import {
   HistoryEventLogDto,
 } from './dto/create-property.dto';
 import { UpdatePropertyDto, UpdateStatusDTO } from './dto/update-property.dto';
+import { IPaginateOptions } from 'src/shared/utils/pagination';
+import { QueryFilterProperty } from './dto/query-filter.dto';
 
 @Controller('properties')
 export class PropertiesController {
@@ -53,9 +55,13 @@ export class PropertiesController {
     );
   }
 
-  @Get()
-  findAll() {
-    return this.propertiesService.findAll();
+  @Get('/listProperties')
+  listProperties(@Query() queryProperty: QueryFilterProperty) {
+    const options: IPaginateOptions = {
+      page: queryProperty.page,
+      limit: queryProperty.limit,
+    };
+    return this.propertiesService.listProperties(options, queryProperty);
   }
 
   @Get(':id')
