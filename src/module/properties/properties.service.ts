@@ -18,6 +18,7 @@ import {
   paginate,
 } from 'src/shared/utils/pagination';
 import { QueryFilterProperty } from './dto/query-filter.dto';
+import { abiXtatuz } from 'src/constants/abiXtatuz';
 
 @Injectable()
 export class PropertiesService {
@@ -421,6 +422,62 @@ export class PropertiesService {
       signer,
     );
     const filter = token.filters.CreateProjectSuccess(null, null, null, null);
+    await token
+      .queryFilter(filter, Number(fromBlock), Number(toBlock))
+      .then((res: (EventLog | Log)[]) => {
+        console.log('res ::: ', res);
+      });
+  }
+
+  async getEventLogBooking(merchantAddress: string) {
+    const provider = new ethers.JsonRpcProvider(process.env.API_RPC_PROVIDER);
+
+    const wallet = new ethers.Wallet(process.env.API_PRIVATE_KEY);
+    const signer = wallet.connect(provider);
+    const token = new ethers.Contract(
+      process.env.API_CONTRACT_ADDRESS,
+      abiXtatuz,
+      signer,
+    );
+
+    return new Promise(async (resolve, reject) => {
+      //to do filter by ownerAddress
+      const filter = await token.filters.BookingSuccess(null, null, null);
+
+      console.log(filter);
+
+      await token.on(filter, (txEvent: ContractEventPayload) => {
+        console.log('into token.on');
+        const log: EventLog = txEvent.log;
+        console.log('argument', log.args);
+        const [projectId, sender, bookingTotalPrice] = log.args;
+        console.log(
+          `id: ${projectId}`,
+          ` sender: ${sender}, bookingTotalPrice: ${bookingTotalPrice}`,
+        );
+        if (sender == merchantAddress) {
+          console.log('reslove log');
+          resolve(txEvent.log);
+        }
+      });
+    });
+  }
+
+  async getHistoryEventBooking(
+    merchantAddress: string,
+    fromBlock: number,
+    toBlock: number,
+  ) {
+    const provider = new ethers.JsonRpcProvider(process.env.API_RPC_PROVIDER);
+
+    const wallet = new ethers.Wallet(process.env.API_PRIVATE_KEY);
+    const signer = wallet.connect(provider);
+    const token = new ethers.Contract(
+      process.env.API_CONTRACT_ADDRESS,
+      abiXtatuz,
+      signer,
+    );
+    const filter = await token.filters.BookingSuccess(null, null, null);
     await token
       .queryFilter(filter, Number(fromBlock), Number(toBlock))
       .then((res: (EventLog | Log)[]) => {
