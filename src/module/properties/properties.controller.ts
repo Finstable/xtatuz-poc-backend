@@ -55,6 +55,36 @@ export class PropertiesController {
     );
   }
 
+  @Get('/eventLogClaim')
+  eventLogClaim(@Query() eventLogDto: EventLogDto) {
+    return this.propertiesService.getEventLogClaim(eventLogDto.merchantAddress);
+  }
+
+  @Get('/historyEventLogClaim')
+  historyEventLogClaim(@Query() eventLogDto: HistoryEventLogDto) {
+    return this.propertiesService.getHistoryEventClaim(
+      eventLogDto.merchantAddress,
+      eventLogDto.fromBlock,
+      eventLogDto.toBlock,
+    );
+  }
+
+  @Get('/eventLogRefund')
+  eventLogRefund(@Query() eventLogDto: EventLogDto) {
+    return this.propertiesService.getEventLogRefund(
+      eventLogDto.merchantAddress,
+    );
+  }
+
+  @Get('/historyEventLogRefund')
+  historyEventLogRefund(@Query() eventLogDto: HistoryEventLogDto) {
+    return this.propertiesService.getHistoryEventRefund(
+      eventLogDto.merchantAddress,
+      eventLogDto.fromBlock,
+      eventLogDto.toBlock,
+    );
+  }
+
   @Get('/listProperties')
   listProperties(@Query() queryProperty: QueryFilterProperty) {
     const options: IPaginateOptions = {

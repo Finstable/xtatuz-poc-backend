@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { CreatePropertyDto } from './dto/create-property.dto';
 import { UpdatePropertyDto, UpdateStatusDTO } from './dto/update-property.dto';
 import { ContractEventPayload, EventLog, Log, ethers } from 'ethers';
-import { erc20 } from 'src/constants/erc20';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -18,6 +17,7 @@ import {
   paginate,
 } from 'src/shared/utils/pagination';
 import { QueryFilterProperty } from './dto/query-filter.dto';
+import { abiXtatuz } from 'src/constants/abiXtatuz';
 
 @Injectable()
 export class PropertiesService {
@@ -369,16 +369,20 @@ export class PropertiesService {
     return `This action removes a #${id} property`;
   }
 
-  async getEventLog(merchantAddress: string) {
+  async getTokenContract() {
     const provider = new ethers.JsonRpcProvider(process.env.API_RPC_PROVIDER);
 
     const wallet = new ethers.Wallet(process.env.API_PRIVATE_KEY);
     const signer = wallet.connect(provider);
-    const token = new ethers.Contract(
+    return await new ethers.Contract(
       process.env.API_CONTRACT_ADDRESS,
-      erc20,
+      abiXtatuz,
       signer,
     );
+  }
+
+  async getEventLog(merchantAddress: string) {
+    const token = await this.getTokenContract();
 
     return new Promise(async (resolve, reject) => {
       //to do filter by ownerAddress
@@ -411,16 +415,84 @@ export class PropertiesService {
     fromBlock: number,
     toBlock: number,
   ) {
-    const provider = new ethers.JsonRpcProvider(process.env.API_RPC_PROVIDER);
-
-    const wallet = new ethers.Wallet(process.env.API_PRIVATE_KEY);
-    const signer = wallet.connect(provider);
-    const token = new ethers.Contract(
-      process.env.API_CONTRACT_ADDRESS,
-      erc20,
-      signer,
+    const token = await this.getTokenContract();
+    const filter = token.filters.CreateProjectSuccess(
+      null,
+      merchantAddress,
+      null,
+      null,
     );
-    const filter = token.filters.CreateProjectSuccess(null, null, null, null);
+    await token
+      .queryFilter(filter, Number(fromBlock), Number(toBlock))
+      .then((res: (EventLog | Log)[]) => {
+        console.log('res ::: ', res);
+      });
+  }
+
+  async getEventLogClaim(merchantAddress: string) {
+    const token = await this.getTokenContract();
+
+    return new Promise(async (resolve, reject) => {
+      const filter = await token.filters.Claim(null, null, null);
+
+      await token.on(filter, (txEvent: ContractEventPayload) => {
+        console.log('into token.on');
+        const log: EventLog = txEvent.log;
+        console.log('argument', log.args);
+        const [isOwner, sender, tokenAddress, amount] = log.args;
+        console.log(
+          `Owner: ${isOwner}`,
+          ` sender: ${sender}, tokenAddress: ${tokenAddress}, amount:${amount}`,
+        );
+        if (sender == merchantAddress) {
+          resolve(txEvent.log);
+        }
+      });
+    });
+  }
+
+  async getHistoryEventClaim(
+    merchantAddress: string,
+    fromBlock: number,
+    toBlock: number,
+  ) {
+    const token = await this.getTokenContract();
+    const filter = await token.filters.Claim(null, null, null);
+    await token
+      .queryFilter(filter, Number(fromBlock), Number(toBlock))
+      .then((res: (EventLog | Log)[]) => {
+        console.log('res ::: ', res);
+      });
+  }
+
+  async getEventLogRefund(merchantAddress: string) {
+    const token = await this.getTokenContract();
+
+    return new Promise(async (resolve, reject) => {
+      const filter = await token.filters.Refund(null, null, null);
+
+      await token.on(filter, (txEvent: ContractEventPayload) => {
+        console.log('into token.on');
+        const log: EventLog = txEvent.log;
+        console.log('argument', log.args);
+        const [sender, projectId, amount] = log.args;
+        console.log(
+          ` sender: ${sender}, projectId: ${projectId}, amount:${amount}`,
+        );
+        if (sender == merchantAddress) {
+          resolve(txEvent.log);
+        }
+      });
+    });
+  }
+
+  async getHistoryEventRefund(
+    merchantAddress: string,
+    fromBlock: number,
+    toBlock: number,
+  ) {
+    const token = await this.getTokenContract();
+    const filter = await token.filters.Refund(null, null, null);
     await token
       .queryFilter(filter, Number(fromBlock), Number(toBlock))
       .then((res: (EventLog | Log)[]) => {
