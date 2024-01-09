@@ -135,12 +135,12 @@ interface Financial {
 export class EventLogDto {
   @IsOptional()
   @IsString()
-  merchantAddress: string;
+  ownerAddress: string;
 }
 
 export class HistoryEventLogDto {
   @IsOptional()
-  merchantAddress: string;
+  ownerAddress: string;
 
   @IsOptional()
   fromBlock: number;

@@ -18,6 +18,7 @@ import {
   paginate,
 } from 'src/shared/utils/pagination';
 import { QueryFilterProperty } from './dto/query-filter.dto';
+import { abiXtatuz } from 'src/constants/abiXtatuz';
 
 @Injectable()
 export class PropertiesService {
@@ -75,7 +76,6 @@ export class PropertiesService {
     const propertyFinancial =
       await this.financialRepository.save(createFinancial);
 
-    // console.log(propertyFinancial.id, 'propertyFinancial');
     const token = await this.tokenRepository.findOne({
       where: {
         id: token_id,
@@ -369,7 +369,7 @@ export class PropertiesService {
     return `This action removes a #${id} property`;
   }
 
-  async getEventLog(merchantAddress: string) {
+  async getEventLog(ownerAddress: string) {
     const provider = new ethers.JsonRpcProvider(process.env.API_RPC_PROVIDER);
 
     const wallet = new ethers.Wallet(process.env.API_PRIVATE_KEY);
@@ -382,24 +382,13 @@ export class PropertiesService {
 
     return new Promise(async (resolve, reject) => {
       //to do filter by ownerAddress
-      const filter = await token.filters.CreateProjectSuccess(
-        null,
-        null,
-        null,
-        null,
-      );
+      const filter = token.filters.CreateProjectSuccess(null, null, null, null);
 
       await token.on(filter, (txEvent: ContractEventPayload) => {
-        console.log('into token.on');
         const log: EventLog = txEvent.log;
-        console.log('argument', log.args);
         const [_projectId, _ownerAddress, _propertyAddress, _tokenAddress] =
           log.args;
-        console.log(
-          `id: ${_projectId}`,
-          `from: ${_ownerAddress}, propertyAddress: ${_propertyAddress}, tokenAddress: ${_tokenAddress}`,
-        );
-        if (_ownerAddress == merchantAddress) {
+        if (_ownerAddress == ownerAddress) {
           resolve(txEvent.log);
         }
       });
@@ -407,7 +396,7 @@ export class PropertiesService {
   }
 
   async getHistoryEvent(
-    merchantAddress: string,
+    ownerAddress: string,
     fromBlock: number,
     toBlock: number,
   ) {
@@ -421,10 +410,55 @@ export class PropertiesService {
       signer,
     );
     const filter = token.filters.CreateProjectSuccess(null, null, null, null);
-    await token
+    return await token
       .queryFilter(filter, Number(fromBlock), Number(toBlock))
       .then((res: (EventLog | Log)[]) => {
-        console.log('res ::: ', res);
+        res;
+      });
+  }
+
+  async getEventLogBooking(ownerAddress: string) {
+    const provider = new ethers.JsonRpcProvider(process.env.API_RPC_PROVIDER);
+
+    const wallet = new ethers.Wallet(process.env.API_PRIVATE_KEY);
+    const signer = wallet.connect(provider);
+    const token = new ethers.Contract(
+      process.env.API_CONTRACT_ADDRESS,
+      abiXtatuz,
+      signer,
+    );
+
+    return new Promise(async (resolve, reject) => {
+      const filter = token.filters.BookingSuccess(null, null, null);
+      await token.on(filter, (txEvent: ContractEventPayload) => {
+        const log: EventLog = txEvent.log;
+        const [projectId, sender, bookingTotalPrice] = log.args;
+        if (sender == ownerAddress) {
+          resolve(txEvent.log);
+        }
+      });
+    });
+  }
+
+  async getHistoryEventBooking(
+    ownerAddress: string,
+    fromBlock: number,
+    toBlock: number,
+  ) {
+    const provider = new ethers.JsonRpcProvider(process.env.API_RPC_PROVIDER);
+
+    const wallet = new ethers.Wallet(process.env.API_PRIVATE_KEY);
+    const signer = wallet.connect(provider);
+    const token = new ethers.Contract(
+      process.env.API_CONTRACT_ADDRESS,
+      abiXtatuz,
+      signer,
+    );
+    const filter = token.filters.BookingSuccess(null, null, null);
+    return await token
+      .queryFilter(filter, Number(fromBlock), Number(toBlock))
+      .then((res: (EventLog | Log)[]) => {
+        res;
       });
   }
 }
