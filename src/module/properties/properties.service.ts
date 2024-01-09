@@ -417,6 +417,35 @@ export class PropertiesService {
       });
   }
 
+  async getEventLogBooking(ownerAddress: string) {
+    const token = await this.getTokenContract();
+
+    return new Promise(async (resolve, reject) => {
+      const filter = token.filters.BookingSuccess(null, null, null);
+      await token.on(filter, (txEvent: ContractEventPayload) => {
+        const log: EventLog = txEvent.log;
+        const [projectId, sender, bookingTotalPrice] = log.args;
+        if (sender == ownerAddress) {
+          resolve(txEvent.log);
+        }
+      });
+    });
+  }
+
+  async getHistoryEventBooking(
+    ownerAddress: string,
+    fromBlock: number,
+    toBlock: number,
+  ) {
+    const token = await this.getTokenContract();
+    const filter = token.filters.BookingSuccess(null, null, null);
+    await token
+      .queryFilter(filter, Number(fromBlock), Number(toBlock))
+      .then((res: (EventLog | Log)[]) => {
+        res;
+      });
+  }
+
   async getEventLogClaim(ownerAddress: string) {
     const token = await this.getTokenContract();
 

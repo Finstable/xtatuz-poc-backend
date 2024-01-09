@@ -92,6 +92,20 @@ export class PropertiesController {
     return this.propertiesService.listProperties(options, queryProperty);
   }
 
+  @Get('/eventLogBooking')
+  eventLogBooking(@Query() eventLogDto: EventLogDto) {
+    return this.propertiesService.getEventLogBooking(eventLogDto.ownerAddress);
+  }
+
+  @Get('/historyEventLogBooking')
+  historyEventLogBooking(@Query() eventLogDto: HistoryEventLogDto) {
+    return this.propertiesService.getHistoryEventBooking(
+      eventLogDto.ownerAddress,
+      eventLogDto.fromBlock,
+      eventLogDto.toBlock,
+    );
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.propertiesService.findOne(+id);
