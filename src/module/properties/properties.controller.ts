@@ -43,13 +43,13 @@ export class PropertiesController {
 
   @Get('/eventLog')
   eventLog(@Query() eventLogDto: EventLogDto) {
-    return this.propertiesService.getEventLog(eventLogDto.merchantAddress);
+    return this.propertiesService.getEventLog(eventLogDto.ownerAddress);
   }
 
   @Get('/historyEventLog')
   historyEventLog(@Query() eventLogDto: HistoryEventLogDto) {
     return this.propertiesService.getHistoryEvent(
-      eventLogDto.merchantAddress,
+      eventLogDto.ownerAddress,
       eventLogDto.fromBlock,
       eventLogDto.toBlock,
     );
@@ -66,15 +66,13 @@ export class PropertiesController {
 
   @Get('/eventLogBooking')
   eventLogBooking(@Query() eventLogDto: EventLogDto) {
-    return this.propertiesService.getEventLogBooking(
-      eventLogDto.merchantAddress,
-    );
+    return this.propertiesService.getEventLogBooking(eventLogDto.ownerAddress);
   }
 
   @Get('/historyEventLogBooking')
   historyEventLogBooking(@Query() eventLogDto: HistoryEventLogDto) {
     return this.propertiesService.getHistoryEventBooking(
-      eventLogDto.merchantAddress,
+      eventLogDto.ownerAddress,
       eventLogDto.fromBlock,
       eventLogDto.toBlock,
     );
