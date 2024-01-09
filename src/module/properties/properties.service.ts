@@ -75,7 +75,6 @@ export class PropertiesService {
     const propertyFinancial =
       await this.financialRepository.save(createFinancial);
 
-    // console.log(propertyFinancial.id, 'propertyFinancial');
     const token = await this.tokenRepository.findOne({
       where: {
         id: token_id,
@@ -381,29 +380,18 @@ export class PropertiesService {
     );
   }
 
-  async getEventLog(merchantAddress: string) {
+  async getEventLog(ownerAddress: string) {
     const token = await this.getTokenContract();
 
     return new Promise(async (resolve, reject) => {
       //to do filter by ownerAddress
-      const filter = await token.filters.CreateProjectSuccess(
-        null,
-        null,
-        null,
-        null,
-      );
+      const filter = token.filters.CreateProjectSuccess(null, null, null, null);
 
       await token.on(filter, (txEvent: ContractEventPayload) => {
-        console.log('into token.on');
         const log: EventLog = txEvent.log;
-        console.log('argument', log.args);
         const [_projectId, _ownerAddress, _propertyAddress, _tokenAddress] =
           log.args;
-        console.log(
-          `id: ${_projectId}`,
-          `from: ${_ownerAddress}, propertyAddress: ${_propertyAddress}, tokenAddress: ${_tokenAddress}`,
-        );
-        if (_ownerAddress == merchantAddress) {
+        if (_ownerAddress == ownerAddress) {
           resolve(txEvent.log);
         }
       });
@@ -411,40 +399,34 @@ export class PropertiesService {
   }
 
   async getHistoryEvent(
-    merchantAddress: string,
+    ownerAddress: string,
     fromBlock: number,
     toBlock: number,
   ) {
     const token = await this.getTokenContract();
     const filter = token.filters.CreateProjectSuccess(
       null,
-      merchantAddress,
+      ownerAddress,
       null,
       null,
     );
     await token
       .queryFilter(filter, Number(fromBlock), Number(toBlock))
       .then((res: (EventLog | Log)[]) => {
-        console.log('res ::: ', res);
+        res;
       });
   }
 
-  async getEventLogClaim(merchantAddress: string) {
+  async getEventLogClaim(ownerAddress: string) {
     const token = await this.getTokenContract();
 
     return new Promise(async (resolve, reject) => {
-      const filter = await token.filters.Claim(null, null, null);
+      const filter = token.filters.Claim(null, null, null);
 
       await token.on(filter, (txEvent: ContractEventPayload) => {
-        console.log('into token.on');
         const log: EventLog = txEvent.log;
-        console.log('argument', log.args);
         const [isOwner, sender, tokenAddress, amount] = log.args;
-        console.log(
-          `Owner: ${isOwner}`,
-          ` sender: ${sender}, tokenAddress: ${tokenAddress}, amount:${amount}`,
-        );
-        if (sender == merchantAddress) {
+        if (sender == ownerAddress) {
           resolve(txEvent.log);
         }
       });
@@ -452,34 +434,29 @@ export class PropertiesService {
   }
 
   async getHistoryEventClaim(
-    merchantAddress: string,
+    ownerAddress: string,
     fromBlock: number,
     toBlock: number,
   ) {
     const token = await this.getTokenContract();
-    const filter = await token.filters.Claim(null, null, null);
+    const filter = token.filters.Claim(null, null, null);
     await token
       .queryFilter(filter, Number(fromBlock), Number(toBlock))
       .then((res: (EventLog | Log)[]) => {
-        console.log('res ::: ', res);
+        res;
       });
   }
 
-  async getEventLogRefund(merchantAddress: string) {
+  async getEventLogRefund(ownerAddress: string) {
     const token = await this.getTokenContract();
 
     return new Promise(async (resolve, reject) => {
-      const filter = await token.filters.Refund(null, null, null);
+      const filter = token.filters.Refund(null, null, null);
 
       await token.on(filter, (txEvent: ContractEventPayload) => {
-        console.log('into token.on');
         const log: EventLog = txEvent.log;
-        console.log('argument', log.args);
         const [sender, projectId, amount] = log.args;
-        console.log(
-          ` sender: ${sender}, projectId: ${projectId}, amount:${amount}`,
-        );
-        if (sender == merchantAddress) {
+        if (sender == ownerAddress) {
           resolve(txEvent.log);
         }
       });
@@ -487,16 +464,16 @@ export class PropertiesService {
   }
 
   async getHistoryEventRefund(
-    merchantAddress: string,
+    ownerAddress: string,
     fromBlock: number,
     toBlock: number,
   ) {
     const token = await this.getTokenContract();
-    const filter = await token.filters.Refund(null, null, null);
+    const filter = token.filters.Refund(null, null, null);
     await token
       .queryFilter(filter, Number(fromBlock), Number(toBlock))
       .then((res: (EventLog | Log)[]) => {
-        console.log('res ::: ', res);
+        res;
       });
   }
 }

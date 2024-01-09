@@ -43,13 +43,13 @@ export class PropertiesController {
 
   @Get('/eventLog')
   eventLog(@Query() eventLogDto: EventLogDto) {
-    return this.propertiesService.getEventLog(eventLogDto.merchantAddress);
+    return this.propertiesService.getEventLog(eventLogDto.ownerAddress);
   }
 
   @Get('/historyEventLog')
   historyEventLog(@Query() eventLogDto: HistoryEventLogDto) {
     return this.propertiesService.getHistoryEvent(
-      eventLogDto.merchantAddress,
+      eventLogDto.ownerAddress,
       eventLogDto.fromBlock,
       eventLogDto.toBlock,
     );
@@ -57,13 +57,13 @@ export class PropertiesController {
 
   @Get('/eventLogClaim')
   eventLogClaim(@Query() eventLogDto: EventLogDto) {
-    return this.propertiesService.getEventLogClaim(eventLogDto.merchantAddress);
+    return this.propertiesService.getEventLogClaim(eventLogDto.ownerAddress);
   }
 
   @Get('/historyEventLogClaim')
   historyEventLogClaim(@Query() eventLogDto: HistoryEventLogDto) {
     return this.propertiesService.getHistoryEventClaim(
-      eventLogDto.merchantAddress,
+      eventLogDto.ownerAddress,
       eventLogDto.fromBlock,
       eventLogDto.toBlock,
     );
@@ -71,15 +71,13 @@ export class PropertiesController {
 
   @Get('/eventLogRefund')
   eventLogRefund(@Query() eventLogDto: EventLogDto) {
-    return this.propertiesService.getEventLogRefund(
-      eventLogDto.merchantAddress,
-    );
+    return this.propertiesService.getEventLogRefund(eventLogDto.ownerAddress);
   }
 
   @Get('/historyEventLogRefund')
   historyEventLogRefund(@Query() eventLogDto: HistoryEventLogDto) {
     return this.propertiesService.getHistoryEventRefund(
-      eventLogDto.merchantAddress,
+      eventLogDto.ownerAddress,
       eventLogDto.fromBlock,
       eventLogDto.toBlock,
     );
