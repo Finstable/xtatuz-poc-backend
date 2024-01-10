@@ -85,7 +85,6 @@ export class PropertiesService {
     const propertyFinancial =
       await this.financialRepository.save(createFinancial);
 
-    console.log(propertyFinancial.id, 'propertyFinancial');
     const token = await this.tokenRepository.findOne({
       where: {
         id: token_id,
