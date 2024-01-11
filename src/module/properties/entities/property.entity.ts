@@ -29,11 +29,8 @@ export class Property extends BaseEntity {
   @Column({ name: 'userId', nullable: true })
   userId: string;
 
-  @Column('text', {
-    array: true,
-    default: {},
-  })
-  img: string[];
+  @Column({ type: 'json' })
+  img: { name: string; path: string };
 
   @Column({ nullable: true })
   issuer: string;
@@ -66,10 +63,10 @@ export class Property extends BaseEntity {
   @Column({ name: 'detail', nullable: true })
   detail: string;
 
-  @Column({ type: 'decimal', name: 'latitude', nullable: true })
+  @Column({ type: 'numeric', name: 'latitude', nullable: true })
   latitude: number;
 
-  @Column({ type: 'decimal', name: 'longitude', nullable: true })
+  @Column({ type: 'numeric', name: 'longitude', nullable: true })
   longitude: number;
 
   @Column({ name: 'locationName', nullable: true })

@@ -18,6 +18,7 @@ import {
 } from 'src/shared/utils/pagination';
 import { QueryFilterProperty } from './dto/query-filter.dto';
 import { abiXtatuz } from 'src/constants/abiXtatuz';
+import * as AWS from 'aws-sdk';
 
 @Injectable()
 export class PropertiesService {
@@ -34,11 +35,20 @@ export class PropertiesService {
     @InjectRepository(Token)
     private tokenRepository: Repository<Token>,
   ) {}
-  async create(createPropertyDto: CreatePropertyDto) {
+
+  s3 = new AWS.S3({
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    region: process.env.AWS_REGION,
+  });
+
+  async create(
+    createPropertyDto: CreatePropertyDto,
+    files: Array<Express.Multer.File>,
+  ) {
     const {
       property_name,
       user_id,
-      img,
       issuer,
       underlying_asset,
       financial,
@@ -85,10 +95,26 @@ export class PropertiesService {
       throw new Error(`can not create property whit token id ${token_id}`);
     }
 
+    const filedImg: any = [];
+
+    if (files) {
+      for (const file of files) {
+        const { originalname } = file;
+
+        const responseFile = await this.uploadS3(
+          file.buffer,
+          process.env.AWS_S3_BUCKET_NAME,
+          originalname,
+          file.mimetype,
+        );
+        await filedImg.push(responseFile.Location);
+      }
+    }
+
     const createProperty = this.propertyRepository.create({
       propertyName: property_name,
       userId: user_id,
-      img: img,
+      img: filedImg,
       issuer: issuer,
       underlyingAsset: underlying_asset,
       financial: propertyFinancial,
@@ -134,12 +160,29 @@ export class PropertiesService {
           distance: location.distance,
           property: properties,
         });
-
         await this.nearLocationRepository.save(propertyNearLocation);
       }
     }
 
     return properties;
+  }
+
+  async uploadS3(file, bucket, name, mimetype) {
+    const params = {
+      Bucket: bucket,
+      Key: `poc/images/${String(name)}`,
+      Body: file,
+      ACL: 'public-read',
+      ContentType: mimetype,
+      ContentDisposition: 'inline',
+    };
+
+    try {
+      const s3Response = await this.s3.upload(params).promise();
+      return s3Response;
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   async listProperties(
@@ -184,11 +227,14 @@ export class PropertiesService {
     return `This action returns a #${id} property`;
   }
 
-  async update(id: number, updatePropertyDto: UpdatePropertyDto) {
+  async update(
+    id: number,
+    updatePropertyDto: UpdatePropertyDto,
+    files: Array<Express.Multer.File>,
+  ) {
     const {
       property_name,
       user_id,
-      img,
       issuer,
       underlying_asset,
       financial,
@@ -283,13 +329,29 @@ export class PropertiesService {
       }
     }
 
+    const filedImg: any = [];
+
+    if (files) {
+      for (const file of files) {
+        const { originalname } = file;
+
+        const responseFile = await this.uploadS3(
+          file.buffer,
+          process.env.AWS_S3_BUCKET_NAME,
+          originalname,
+          file.mimetype,
+        );
+        await filedImg.push(responseFile.Location);
+      }
+    }
+
     await this.propertyRepository
       .createQueryBuilder()
       .update()
       .set({
         propertyName: property_name,
         userId: user_id,
-        img: img,
+        img: filedImg,
         issuer: issuer,
         underlyingAsset: underlying_asset,
         totalRaise: total_raise,

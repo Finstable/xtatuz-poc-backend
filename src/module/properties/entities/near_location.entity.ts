@@ -20,7 +20,7 @@ export class NearLocation {
   @Column({ nullable: true })
   description: string;
 
-  @Column({ type: 'decimal', nullable: true })
+  @Column({ type: 'numeric', nullable: true })
   distance: number;
 
   @CreateDateColumn({ name: 'createdAt', type: 'timestamptz' })

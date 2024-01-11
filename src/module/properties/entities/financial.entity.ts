@@ -13,25 +13,25 @@ export class Financial {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'decimal', name: 'grossRentPerYear', nullable: true })
+  @Column({ type: 'numeric', name: 'grossRentPerYear', nullable: true })
   grossRentPerYear: number;
 
-  @Column({ type: 'decimal', name: 'grossRentPerMonth', nullable: true })
+  @Column({ type: 'numeric', name: 'grossRentPerMonth', nullable: true })
   grossRentPerMonth: number;
 
-  @Column({ type: 'decimal', name: 'monthlyCosts', nullable: true })
+  @Column({ type: 'numeric', name: 'monthlyCosts', nullable: true })
   monthlyCosts: number;
 
-  @Column({ type: 'decimal', name: 'netRentPerYear', nullable: true })
+  @Column({ type: 'numeric', name: 'netRentPerYear', nullable: true })
   netRentPerYear: number;
 
-  @Column({ type: 'decimal', name: 'netRentPerMonth', nullable: true })
+  @Column({ type: 'numeric', name: 'netRentPerMonth', nullable: true })
   netRentPerMonth: number;
 
-  @Column({ type: 'decimal', name: 'totalPrice', nullable: true })
+  @Column({ type: 'numeric', name: 'totalPrice', nullable: true })
   totalPrice: number;
 
-  @Column({ type: 'decimal', name: 'expectedIncome', nullable: true })
+  @Column({ type: 'numeric', name: 'expectedIncome', nullable: true })
   expectedIncome: number;
 
   @CreateDateColumn({ name: 'createdAt', type: 'timestamptz' })

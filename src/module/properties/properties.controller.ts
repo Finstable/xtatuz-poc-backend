@@ -7,6 +7,9 @@ import {
   Param,
   Delete,
   Query,
+  UseInterceptors,
+  UploadedFile,
+  UploadedFiles,
 } from '@nestjs/common';
 import { PropertiesService } from './properties.service';
 import {
@@ -17,23 +20,30 @@ import {
 import { UpdatePropertyDto, UpdateStatusDTO } from './dto/update-property.dto';
 import { IPaginateOptions } from 'src/shared/utils/pagination';
 import { QueryFilterProperty } from './dto/query-filter.dto';
+import { AnyFilesInterceptor } from '@nestjs/platform-express';
 
 @Controller('properties')
 export class PropertiesController {
   constructor(private readonly propertiesService: PropertiesService) {}
 
   @Post('/createProperty')
-  createProperty(@Body() createPropertyDto: CreatePropertyDto) {
-    return this.propertiesService.create(createPropertyDto);
+  @UseInterceptors(AnyFilesInterceptor())
+  createProperty(
+    @UploadedFiles() files: Array<Express.Multer.File>,
+    @Body() createPropertyDto: CreatePropertyDto,
+  ) {
+    return this.propertiesService.create(createPropertyDto, files);
   }
 
   @Patch(':id/updateProperty')
+  @UseInterceptors(AnyFilesInterceptor())
   update(
     @Param('id') id: string,
+    @UploadedFiles() files: Array<Express.Multer.File>,
     @Body() updatePropertyDto: UpdatePropertyDto,
   ) {
     console.log('id', id);
-    return this.propertiesService.update(+id, updatePropertyDto);
+    return this.propertiesService.update(+id, updatePropertyDto, files);
   }
 
   @Patch(':id/updateStatusProperty')
