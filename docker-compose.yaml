@@ -1,0 +1,11 @@
+version: '3.7'
+
+services:
+  xtatuz-poc-backend:
+    container_name: xtatuz-poc-backend
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 4000:4000
+    restart: unless-stopped
