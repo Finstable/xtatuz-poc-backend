@@ -33,7 +33,7 @@ jobs:
           echo $'AWS_REGION=${{secrets.AWS_REGION}}\n' >> .env
       - name: Run docker compose
         run: |
-          docker compose up -d --build
+          docker-compose up -d --build
       - name: Clear unused containers
         run: |
           docker system prune -f
