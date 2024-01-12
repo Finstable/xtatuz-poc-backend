@@ -30,7 +30,7 @@ export const abiXtatuz = [
         type: 'uint256',
       },
       {
-        indexed: false,
+        indexed: true,
         internalType: 'address',
         name: 'investorAddress',
         type: 'address',
@@ -41,6 +41,12 @@ export const abiXtatuz = [
         name: 'bookingTotalPrice',
         type: 'uint256',
       },
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'propertyAddress',
+        type: 'address',
+      },
     ],
     name: 'BookingSuccess',
     type: 'event',
@@ -49,7 +55,7 @@ export const abiXtatuz = [
     anonymous: false,
     inputs: [
       {
-        indexed: false,
+        indexed: true,
         internalType: 'uint256',
         name: 'projectId',
         type: 'uint256',
@@ -125,6 +131,44 @@ export const abiXtatuz = [
     ],
     name: 'CreateProjectSuccess',
     type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'userAddress',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'projectId',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'amount',
+        type: 'uint256',
+      },
+    ],
+    name: 'Refund',
+    type: 'event',
+  },
+  {
+    inputs: [],
+    name: 'adminAddress',
+    outputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
   },
   {
     inputs: [
@@ -319,6 +363,19 @@ export const abiXtatuz = [
     type: 'function',
   },
   {
+    inputs: [],
+    name: 'projectCount',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
     inputs: [
       {
         internalType: 'uint256',
@@ -330,9 +387,5 @@ export const abiXtatuz = [
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
-  },
-  {
-    stateMutability: 'payable',
-    type: 'receive',
   },
 ];

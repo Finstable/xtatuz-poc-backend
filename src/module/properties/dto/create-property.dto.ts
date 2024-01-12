@@ -46,6 +46,9 @@ export class CreatePropertyDto {
   @IsOptional()
   start_presale: Date;
 
+  @IsOptional()
+  end_presale: Date;
+
   @IsNumber()
   @IsNotEmpty()
   total_supply: number;

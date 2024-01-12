@@ -8,8 +8,8 @@ import {
   Delete,
   Query,
   UseInterceptors,
-  UploadedFile,
   UploadedFiles,
+  UseGuards,
 } from '@nestjs/common';
 import { PropertiesService } from './properties.service';
 import {
@@ -21,12 +21,16 @@ import { UpdatePropertyDto, UpdateStatusDTO } from './dto/update-property.dto';
 import { IPaginateOptions } from 'src/shared/utils/pagination';
 import { QueryFilterProperty } from './dto/query-filter.dto';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
+import { AuthGuard } from '../auth/guard/auth.guard';
+import { GetAccessToken } from 'src/common/get-token.decorator';
+import { IAccessToken } from 'src/shared/interfaces/token.interface';
 
 @Controller('properties')
 export class PropertiesController {
   constructor(private readonly propertiesService: PropertiesService) {}
 
   @Post('/createProperty')
+  @UseGuards(AuthGuard)
   @UseInterceptors(AnyFilesInterceptor())
   createProperty(
     @UploadedFiles() files: Array<Express.Multer.File>,
@@ -36,6 +40,7 @@ export class PropertiesController {
   }
 
   @Patch(':id/updateProperty')
+  @UseGuards(AuthGuard)
   @UseInterceptors(AnyFilesInterceptor())
   update(
     @Param('id') id: string,
@@ -47,8 +52,9 @@ export class PropertiesController {
   }
 
   @Patch(':id/updateStatusProperty')
+  @UseGuards(AuthGuard)
   updateStatusProperty(@Param('id') id: string, @Body() body: UpdateStatusDTO) {
-    return this.propertiesService.updateStatusProperty(+id, body);
+    return this.propertiesService.updateStatusProperty(+id, body.status);
   }
 
   @Get('/eventLog')
@@ -94,6 +100,7 @@ export class PropertiesController {
   }
 
   @Get('/listProperties')
+  @UseGuards(AuthGuard)
   listProperties(@Query() queryProperty: QueryFilterProperty) {
     const options: IPaginateOptions = {
       page: queryProperty.page,
@@ -124,5 +131,17 @@ export class PropertiesController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.propertiesService.remove(+id);
+  }
+
+  @Post('/deploy/:id')
+  @UseGuards(AuthGuard)
+  deployProperty(
+    @Param('id') id: string,
+    @GetAccessToken() { walletAddress }: IAccessToken,
+  ) {
+    return this.propertiesService.deployProperty(
+      +id,
+      walletAddress?.toLowerCase(),
+    );
   }
 }

@@ -2,6 +2,7 @@ import { PartialType } from '@nestjs/mapped-types';
 import { CreatePropertyDto } from './create-property.dto';
 import {
   IsArray,
+  IsEnum,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -47,6 +48,9 @@ export class UpdatePropertyDto extends PartialType(CreatePropertyDto) {
 
   @IsOptional()
   start_presale: Date;
+
+  @IsOptional()
+  end_presale: Date;
 
   @IsNumber()
   @IsOptional()
@@ -155,7 +159,7 @@ export class HistoryEventLogDto {
 }
 
 export class UpdateStatusDTO {
-  @IsString()
+  @IsArray()
   @IsNotEmpty()
   status: string;
 }
