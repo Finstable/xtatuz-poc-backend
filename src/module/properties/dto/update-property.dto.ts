@@ -159,7 +159,7 @@ export class HistoryEventLogDto {
 }
 
 export class UpdateStatusDTO {
-  @IsArray()
+  @IsString()
   @IsNotEmpty()
   status: string;
 }
