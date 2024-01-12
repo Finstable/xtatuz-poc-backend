@@ -11,12 +11,14 @@ export class ChainsService {
     @InjectRepository(Chain)
     private chainRepo: Repository<Chain>,
   ) {}
+
   create(createChainDto: CreateChainDto) {
     return 'This action adds a new chain';
   }
 
   findAll() {
-    return `This action returns all chains`;
+    const chains = this.chainRepo.findAndCount();
+    return chains;
   }
 
   findOne(id: number) {
