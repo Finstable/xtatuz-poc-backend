@@ -16,7 +16,7 @@ export class TokenService {
   }
 
   findAll() {
-    const tokens = this.tokenRepository.findAndCount();
+    const tokens = this.tokenRepository.find();
     return tokens;
   }
 
