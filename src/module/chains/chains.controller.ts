@@ -20,7 +20,7 @@ export class ChainsController {
     return this.chainsService.create(createChainDto);
   }
 
-  @Get()
+  @Get('/listChain')
   findAll() {
     return this.chainsService.findAll();
   }

@@ -20,7 +20,7 @@ export class TokenController {
     return this.tokenService.create(createTokenDto);
   }
 
-  @Get()
+  @Get('/listToken')
   findAll() {
     return this.tokenService.findAll();
   }
