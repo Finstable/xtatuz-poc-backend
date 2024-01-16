@@ -17,7 +17,7 @@ export class ChainsService {
   }
 
   findAll() {
-    const chains = this.chainRepo.findAndCount();
+    const chains = this.chainRepo.find();
     return chains;
   }
 
