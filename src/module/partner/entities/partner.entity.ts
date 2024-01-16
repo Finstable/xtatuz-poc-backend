@@ -12,4 +12,7 @@ export class Partner {
 
   @Column({ name: 'imageUrl' })
   imageUrl: string;
+
+  @Column()
+  isActive: boolean;
 }
