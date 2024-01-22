@@ -31,7 +31,7 @@ export class Chain {
   @Column({ name: 'nativeSymbol' })
   nativeSymbol: string;
 
-  @Column({ name: 'nativeDecimal' })
+  @Column({ name: 'nativeDecimals' })
   nativeDecimals: string;
 
   @Column({ name: 'blockExplorerUrls' })
