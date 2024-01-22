@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreatePropertyDto } from './dto/create-property.dto';
 import { UpdatePropertyDto } from './dto/update-property.dto';
 import { ContractEventPayload, EventLog, Log, ethers } from 'ethers';
@@ -20,6 +24,7 @@ import { QueryFilterProperty } from './dto/query-filter.dto';
 import { abiXtatuz } from 'src/constants/abiXtatuz';
 import * as AWS from 'aws-sdk';
 import { amount, dateToTimestamp } from 'src/shared/utils/calculate';
+import * as dayjs from 'dayjs';
 
 @Injectable()
 export class PropertiesService {
@@ -74,105 +79,109 @@ export class PropertiesService {
       property_features,
       token_id,
     } = createPropertyDto;
-    const createFinancial = this.financialRepository.create({
-      grossRentPerYear: financial.gross_rent_per_year,
-      grossRentPerMonth: financial.gross_rent_per_month,
-      monthlyCosts: financial.monthly_costs,
-      netRentPerYear: financial.net_rent_per_year,
-      netRentPerMonth: financial.net_rent_per_month,
-      totalPrice: financial.total_price,
-      expectedIncome: financial.expected_income,
-    });
+    try {
+      const createFinancial = this.financialRepository.create({
+        grossRentPerYear: financial.gross_rent_per_year,
+        grossRentPerMonth: financial.gross_rent_per_month,
+        monthlyCosts: financial.monthly_costs,
+        netRentPerYear: financial.net_rent_per_year,
+        netRentPerMonth: financial.net_rent_per_month,
+        totalPrice: financial.total_price,
+        expectedIncome: financial.expected_income,
+      });
 
-    const propertyFinancial =
-      await this.financialRepository.save(createFinancial);
+      const propertyFinancial =
+        await this.financialRepository.save(createFinancial);
 
-    const token = await this.tokenRepository.findOne({
-      where: {
-        id: token_id,
-      },
-    });
+      const token = await this.tokenRepository.findOne({
+        where: {
+          id: token_id,
+        },
+      });
 
-    if (!token) {
-      throw new Error(`can not create property whit token id ${token_id}`);
-    }
-
-    const filedImg: any = [];
-
-    if (files) {
-      for (const file of files) {
-        const { originalname } = file;
-
-        const responseFile = await this.uploadS3(
-          file.buffer,
-          process.env.AWS_S3_BUCKET_NAME,
-          originalname,
-          file.mimetype,
-        );
-        await filedImg.push(responseFile.Location);
+      if (!token) {
+        throw new Error(`can not create property whit token id ${token_id}`);
       }
-    }
 
-    // const startDate = dayjs(start_presale).unix();
-    const startDate = new Date(Number(start_presale) * 1000);
-    const endDate = new Date(Number(end_presale) * 1000);
-    // const endDate = dayjs(end_presale).unix();
+      const filedImg: any = [];
 
-    const createProperty = this.propertyRepository.create({
-      propertyName: property_name,
-      userId: user_id,
-      img: filedImg,
-      issuer: issuer,
-      underlyingAsset: underlying_asset,
-      financial: propertyFinancial,
-      status: PropertyStatus.WAITING,
-      totalRaise: total_raise,
-      startPresale: startDate,
-      endPresale: endDate,
-      totalSupply: total_supply,
-      linkDoc: link_doc,
-      detail: detail,
-      latitude: latitude,
-      longitude: longitude,
-      locationName: location_name,
-      onchainId: onchain_id,
-      note: note,
-      addressProperty: address_property,
-      city: city,
-      country: country,
-      type: type,
-      propertyConstructStatus: property_construct_status,
-      tokenPrice: token_price,
-      token: token,
-    });
+      if (files) {
+        for (const file of files) {
+          const { originalname } = file;
 
-    const properties = await this.propertyRepository.save(createProperty);
-
-    if (property_features) {
-      for (const feature of property_features) {
-        const propertyFeatures = this.propertyFeatureRepository.create({
-          key: feature.key,
-          value: feature.value,
-          unit: feature.unit,
-          property: properties,
-        });
-        await this.propertyFeatureRepository.save(propertyFeatures);
+          const responseFile = await this.uploadS3(
+            file.buffer,
+            process.env.AWS_S3_BUCKET_NAME,
+            originalname,
+            file.mimetype,
+          );
+          await filedImg.push(responseFile.Location);
+        }
       }
-    }
 
-    if (near_location) {
-      for (const location of near_location) {
-        const propertyNearLocation = this.nearLocationRepository.create({
-          locationName: location.location_name,
-          description: location.description,
-          distance: location.distance,
-          property: properties,
-        });
-        await this.nearLocationRepository.save(propertyNearLocation);
+      // const startDate = dayjs(start_presale).unix();
+      const startDate = new Date(Number(start_presale) * 1000);
+      const endDate = new Date(Number(end_presale) * 1000);
+      // const endDate = dayjs(end_presale).unix();
+
+      const createProperty = this.propertyRepository.create({
+        propertyName: property_name,
+        userId: user_id,
+        img: filedImg,
+        issuer: issuer,
+        underlyingAsset: underlying_asset,
+        financial: propertyFinancial,
+        status: PropertyStatus.WAITING,
+        totalRaise: total_raise,
+        startPresale: startDate,
+        endPresale: endDate,
+        totalSupply: total_supply,
+        linkDoc: link_doc,
+        detail: detail,
+        latitude: latitude,
+        longitude: longitude,
+        locationName: location_name,
+        onchainId: onchain_id,
+        note: note,
+        addressProperty: address_property,
+        city: city,
+        country: country,
+        type: type,
+        propertyConstructStatus: property_construct_status,
+        tokenPrice: token_price,
+        token: token,
+      });
+
+      const properties = await this.propertyRepository.save(createProperty);
+
+      if (property_features) {
+        for (const feature of property_features) {
+          const propertyFeatures = this.propertyFeatureRepository.create({
+            key: feature.key,
+            value: feature.value,
+            unit: feature.unit,
+            property: properties,
+          });
+          await this.propertyFeatureRepository.save(propertyFeatures);
+        }
       }
-    }
 
-    return properties;
+      if (near_location) {
+        for (const location of near_location) {
+          const propertyNearLocation = this.nearLocationRepository.create({
+            locationName: location.location_name,
+            description: location.description,
+            distance: location.distance,
+            property: properties,
+          });
+          await this.nearLocationRepository.save(propertyNearLocation);
+        }
+      }
+
+      return properties;
+    } catch (error) {
+      throw new BadRequestException(`Fail to create property error:${error}`);
+    }
   }
 
   async uploadS3(file, bucket, name, mimetype) {
@@ -188,8 +197,8 @@ export class PropertiesService {
     try {
       const s3Response = await this.s3.upload(params).promise();
       return s3Response;
-    } catch (e) {
-      console.log(e);
+    } catch (error) {
+      throw new BadRequestException(`Fail to uploadS3 error:${error}`);
     }
   }
 
@@ -276,177 +285,185 @@ export class PropertiesService {
       token_id,
     } = updatePropertyDto;
 
-    const property = await this.findOne(id);
-    if (!property) {
-      throw new Error('property not found');
-    }
-
-    if (financial) {
-      await this.financialRepository
-        .createQueryBuilder()
-        .where('id = :id', { id: financial.id })
-        .update()
-        .set({
-          grossRentPerYear: financial.gross_rent_per_year,
-          grossRentPerMonth: financial.gross_rent_per_month,
-          monthlyCosts: financial.monthly_costs,
-          netRentPerYear: financial.net_rent_per_year,
-          netRentPerMonth: financial.net_rent_per_month,
-          totalPrice: financial.total_price,
-          expectedIncome: financial.expected_income,
-        })
-        .execute();
-    }
-
-    if (token_id) {
-      const token = await this.tokenRepository.findOne({
-        where: {
-          id: token_id,
-        },
-      });
-      if (!token) {
-        throw new Error(`can not update property whit token id ${token_id}`);
+    try {
+      const property = await this.findOne(id);
+      if (!property) {
+        throw new Error('property not found');
       }
-      await this.propertyRepository
-        .createQueryBuilder()
-        .update()
-        .set({ token: token })
-        .execute();
-    }
 
-    if (property_features) {
-      for (const feature of property_features) {
-        await this.propertyFeatureRepository
-          .createQueryBuilder('property_feature')
-          .where('propertyId = :id', { id: id })
-          .andWhere('id = :ids', { ids: feature.id })
-          .update()
-          .set({ key: feature.key, value: feature.value, unit: feature.unit })
-          .execute();
-      }
-    }
-
-    if (near_location) {
-      for (const location of near_location) {
-        await this.nearLocationRepository
+      if (financial) {
+        await this.financialRepository
           .createQueryBuilder()
-          .where('propertyId = :id', { id: id })
-          .andWhere('id = :ids', { ids: location.id })
+          .where('id = :id', { id: financial.id })
           .update()
           .set({
-            locationName: location.location_name,
-            description: location.description,
-            distance: location.distance,
+            grossRentPerYear: financial.gross_rent_per_year,
+            grossRentPerMonth: financial.gross_rent_per_month,
+            monthlyCosts: financial.monthly_costs,
+            netRentPerYear: financial.net_rent_per_year,
+            netRentPerMonth: financial.net_rent_per_month,
+            totalPrice: financial.total_price,
+            expectedIncome: financial.expected_income,
           })
           .execute();
       }
-    }
 
-    const filedImg: any = [];
-
-    if (files.length) {
-      for (const file of files) {
-        const { originalname } = file;
-
-        const responseFile = await this.uploadS3(
-          file.buffer,
-          process.env.AWS_S3_BUCKET_NAME,
-          originalname,
-          file.mimetype,
-        );
-        await filedImg.push(responseFile.Location);
+      if (token_id) {
+        const token = await this.tokenRepository.findOne({
+          where: {
+            id: token_id,
+          },
+        });
+        if (!token) {
+          throw new Error(`can not update property whit token id ${token_id}`);
+        }
+        await this.propertyRepository
+          .createQueryBuilder()
+          .update()
+          .set({ token: token })
+          .execute();
       }
+
+      if (property_features) {
+        for (const feature of property_features) {
+          await this.propertyFeatureRepository
+            .createQueryBuilder('property_feature')
+            .where('propertyId = :id', { id: id })
+            .andWhere('id = :ids', { ids: feature.id })
+            .update()
+            .set({ key: feature.key, value: feature.value, unit: feature.unit })
+            .execute();
+        }
+      }
+
+      if (near_location) {
+        for (const location of near_location) {
+          await this.nearLocationRepository
+            .createQueryBuilder()
+            .where('propertyId = :id', { id: id })
+            .andWhere('id = :ids', { ids: location.id })
+            .update()
+            .set({
+              locationName: location.location_name,
+              description: location.description,
+              distance: location.distance,
+            })
+            .execute();
+        }
+      }
+
+      const filedImg: any = [];
+
+      if (files.length) {
+        for (const file of files) {
+          const { originalname } = file;
+
+          const responseFile = await this.uploadS3(
+            file.buffer,
+            process.env.AWS_S3_BUCKET_NAME,
+            originalname,
+            file.mimetype,
+          );
+          await filedImg.push(responseFile.Location);
+        }
+      }
+
+      let startDate;
+      let endDate;
+
+      if (start_presale) {
+        startDate = new Date(Number(start_presale) * 1000);
+      }
+
+      if (end_presale) {
+        endDate = new Date(Number(end_presale) * 1000);
+      }
+      await this.propertyRepository
+        .createQueryBuilder()
+        .update()
+        .set({
+          propertyName: property_name,
+          userId: user_id,
+          img: files.length ? filedImg : property.img,
+          issuer: issuer,
+          underlyingAsset: underlying_asset,
+          totalRaise: total_raise,
+          startPresale: startDate,
+          endPresale: endDate,
+          totalSupply: total_supply,
+          linkDoc: link_doc,
+          detail: detail,
+          latitude: latitude,
+          longitude: longitude,
+          locationName: location_name,
+          onchainId: onchain_id,
+          note: note,
+          addressProperty: address_property,
+          city: city,
+          country: country,
+          type: type,
+          propertyConstructStatus: property_construct_status,
+          tokenPrice: token_price,
+        })
+        .where('id = :id', { id })
+        .execute();
+
+      return property;
+    } catch (error) {
+      throw new BadRequestException(`Fail to update Property error:${error}`);
     }
-
-    let startDate;
-    let endDate;
-
-    if (start_presale) {
-      startDate = new Date(Number(start_presale) * 1000);
-    }
-
-    if (end_presale) {
-      endDate = new Date(Number(end_presale) * 1000);
-    }
-    await this.propertyRepository
-      .createQueryBuilder()
-      .update()
-      .set({
-        propertyName: property_name,
-        userId: user_id,
-        img: files.length ? filedImg : property.img,
-        issuer: issuer,
-        underlyingAsset: underlying_asset,
-        totalRaise: total_raise,
-        startPresale: startDate,
-        endPresale: endDate,
-        totalSupply: total_supply,
-        linkDoc: link_doc,
-        detail: detail,
-        latitude: latitude,
-        longitude: longitude,
-        locationName: location_name,
-        onchainId: onchain_id,
-        note: note,
-        addressProperty: address_property,
-        city: city,
-        country: country,
-        type: type,
-        propertyConstructStatus: property_construct_status,
-        tokenPrice: token_price,
-      })
-      .where('id = :id', { id })
-      .execute();
-
-    return `This action updates a #${id} property`;
   }
 
   async updateStatusProperty(id: number, status: string) {
-    const property = await this.propertyRepository.findOne({ where: { id } });
-    if (!property) {
-      throw new Error('property not found');
-    }
+    try {
+      const property = await this.propertyRepository.findOne({ where: { id } });
+      if (!property) {
+        throw new Error('property not found');
+      }
 
-    if (status === PropertyStatus.DEPLOYED) {
-      await this.propertyRepository
-        .createQueryBuilder()
-        .update()
-        .set({
-          status: PropertyStatus.DEPLOYED,
-        })
-        .where('id = :id', { id })
-        .execute();
-    } else if (status === PropertyStatus.REFUND) {
-      await this.propertyRepository
-        .createQueryBuilder()
-        .update()
-        .set({
-          status: PropertyStatus.REFUND,
-        })
-        .where('id = :id', { id })
-        .execute();
-    } else if (status === PropertyStatus.SUCCESS) {
-      await this.propertyRepository
-        .createQueryBuilder()
-        .update()
-        .set({
-          status: PropertyStatus.SUCCESS,
-        })
-        .where('id = :id', { id })
-        .execute();
-    } else if (status === PropertyStatus.WAITING) {
-      await this.propertyRepository
-        .createQueryBuilder()
-        .update()
-        .set({
-          status: PropertyStatus.WAITING,
-        })
-        .where('id = :id', { id })
-        .execute();
+      if (status === PropertyStatus.DEPLOYED) {
+        await this.propertyRepository
+          .createQueryBuilder()
+          .update()
+          .set({
+            status: PropertyStatus.DEPLOYED,
+          })
+          .where('id = :id', { id })
+          .execute();
+      } else if (status === PropertyStatus.REFUND) {
+        await this.propertyRepository
+          .createQueryBuilder()
+          .update()
+          .set({
+            status: PropertyStatus.REFUND,
+          })
+          .where('id = :id', { id })
+          .execute();
+      } else if (status === PropertyStatus.SUCCESS) {
+        await this.propertyRepository
+          .createQueryBuilder()
+          .update()
+          .set({
+            status: PropertyStatus.SUCCESS,
+          })
+          .where('id = :id', { id })
+          .execute();
+      } else if (status === PropertyStatus.WAITING) {
+        await this.propertyRepository
+          .createQueryBuilder()
+          .update()
+          .set({
+            status: PropertyStatus.WAITING,
+          })
+          .where('id = :id', { id })
+          .execute();
+      }
+      return property;
+    } catch (error) {
+      throw new BadRequestException(
+        `Fail to update Property status error:${error}`,
+      );
     }
-    return {
-      message: `Property status is ${status}, update success!`,
-    };
   }
 
   remove(id: number) {
@@ -596,53 +613,70 @@ export class PropertiesService {
   }
 
   async deployProperty(id: number, walletAddress: string) {
-    const property = await this.propertyRepository.findOne({
-      where: {
-        id: id,
-      },
-      relations: ['token'],
-    });
-    if (!property) {
-      throw new Error('property not found');
+    try {
+      const property = await this.propertyRepository.findOne({
+        where: {
+          id: id,
+        },
+        relations: ['token'],
+      });
+      if (!property) {
+        throw new NotFoundException('property not found');
+      }
+      if (property.status !== PropertyStatus.WAITING) {
+        throw new BadRequestException(`This Property Deployed!`);
+      }
+
+      const contract = await this.getContract();
+      const dateStartPresale = dateToTimestamp(property.startPresale);
+      const dateEndPresale = dateToTimestamp(property.endPresale);
+
+      const tokenProperty = await this.tokenRepository.findOne({
+        where: {
+          id: property.token.id,
+        },
+      });
+
+      const startDateTime = dayjs(property.startPresale);
+      const currentDateTime = dayjs();
+
+      if (startDateTime.isBefore(currentDateTime)) {
+        throw new BadRequestException(`Invalid Start Presale!`);
+      }
+
+      const [resultCreate, resultEventLog]: any = await Promise.all([
+        await contract.createProject(
+          [
+            property.propertyName,
+            dateStartPresale,
+            dateEndPresale,
+            amount(`${property.tokenPrice}`, property.token.decimal),
+            amount(`${property.totalRaise}`, property.token.decimal),
+          ],
+          [tokenProperty.name, tokenProperty.symbol],
+          walletAddress,
+        ),
+        await this.getEventLog(walletAddress),
+      ]);
+
+      await this.propertyRepository
+        .createQueryBuilder()
+        .update()
+        .where('id = :id', { id })
+        .set({
+          blockNumber: `${resultEventLog.blockNumber}`,
+          contractId: `${Number(resultEventLog.args[0])}`,
+        })
+        .execute();
+
+      const response = await this.updateStatusProperty(
+        id,
+        PropertyStatus.DEPLOYED,
+      );
+
+      return { data: response };
+    } catch (error) {
+      throw new BadRequestException(`Fail to Deploy Property error:${error}`);
     }
-
-    const contract = await this.getContract();
-    const dateStartPresale = dateToTimestamp(property.startPresale);
-    const dateEndPresale = dateToTimestamp(property.endPresale);
-
-    const tokenProperty = await this.tokenRepository.findOne({
-      where: {
-        id: property.token.id,
-      },
-    });
-
-    const [resultCreate, resultEventLog]: any = await Promise.all([
-      await contract.createProject(
-        [
-          property.propertyName,
-          dateStartPresale,
-          dateEndPresale,
-          amount(`${property.tokenPrice}`, property.token.decimal),
-          amount(`${property.totalRaise}`, property.token.decimal),
-        ],
-        [tokenProperty.name, tokenProperty.symbol],
-        walletAddress,
-      ),
-      await this.getEventLog(walletAddress),
-    ]);
-
-    await this.propertyRepository
-      .createQueryBuilder()
-      .update()
-      .where('id = :id', { id })
-      .set({
-        blockNumber: `${resultEventLog.blockNumber}`,
-        contractId: `${Number(resultEventLog.args[0])}`,
-      })
-      .execute();
-
-    await this.updateStatusProperty(id, PropertyStatus.DEPLOYED);
-
-    return `Deploy a #${id} property to smart contract is success`;
   }
 }

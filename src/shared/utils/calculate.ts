@@ -1,4 +1,5 @@
 import { parseUnits } from 'ethers';
+import * as dayjs from 'dayjs';
 
 export const amount = (tokenAmount: string, decimal: number) => {
   const amount = parseUnits(tokenAmount, decimal);
@@ -7,5 +8,6 @@ export const amount = (tokenAmount: string, decimal: number) => {
 };
 
 export const dateToTimestamp = (date: Date) => {
-  return Math.floor(date.getTime() / 1000);
+  const timestamp = dayjs(date).unix();
+  return timestamp;
 };
