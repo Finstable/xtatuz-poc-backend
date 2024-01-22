@@ -21,4 +21,19 @@ export class Chain {
     cascade: true,
   })
   token: Token[];
+
+  @Column({ name: 'iconPath' })
+  iconPath: string;
+
+  @Column({ name: 'nativeName' })
+  nativeName: string;
+
+  @Column({ name: 'nativeSymbol' })
+  nativeSymbol: string;
+
+  @Column({ name: 'nativeDecimal' })
+  nativeDecimals: string;
+
+  @Column({ name: 'blockExplorerUrls' })
+  blockExplorerUrls: string;
 }
