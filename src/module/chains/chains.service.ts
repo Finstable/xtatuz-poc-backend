@@ -4,6 +4,12 @@ import { UpdateChainDto } from './dto/update-chain.dto';
 import { Chain } from './entities/chain.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { QueryFilterChains } from './dto/query-chain.dto';
+import {
+  IPaginateOptions,
+  IPaginationMeta,
+  paginate,
+} from 'src/shared/utils/pagination';
 
 @Injectable()
 export class ChainsService {
@@ -16,9 +22,27 @@ export class ChainsService {
     return 'This action adds a new chain';
   }
 
-  findAll() {
-    const chains = this.chainRepo.find();
-    return chains;
+  async listChain(
+    options: IPaginateOptions,
+    queryFilterChain: QueryFilterChains,
+  ): Promise<IPaginationMeta<Chain>> {
+    const chainsBuilder = await this.chainRepo
+      .createQueryBuilder('chains')
+      .leftJoinAndSelect('chains.token', 'token.id');
+
+    if (queryFilterChain.id) {
+      chainsBuilder.andWhere('chains.id = :id', {
+        id: queryFilterChain.id,
+      });
+    }
+
+    if (queryFilterChain.chain_id) {
+      chainsBuilder.andWhere('chains.chainId = :chainId', {
+        chainId: queryFilterChain.chain_id,
+      });
+    }
+
+    return paginate<Chain>(chainsBuilder, options);
   }
 
   findOne(id: number) {
@@ -41,7 +65,6 @@ export class ChainsService {
         token: true,
       },
     });
-    console.log(chains, 'chains');
     return chains;
   }
 }
