@@ -454,12 +454,12 @@ export class PropertiesService {
   }
 
   async getContract() {
-    const provider = new ethers.JsonRpcProvider(process.env.API_RPC_PROVIDER);
+    const provider = new ethers.JsonRpcProvider(process.env.RPC_PROVIDER);
 
-    const wallet = new ethers.Wallet(process.env.API_PRIVATE_KEY);
+    const wallet = new ethers.Wallet(process.env.PRIVATE_KEY);
     const signer = wallet.connect(provider);
     return new ethers.Contract(
-      process.env.API_CONTRACT_ADDRESS,
+      process.env.CONTRACT_XTATUZ_ADDRESS,
       abiXtatuz,
       signer,
     );
