@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CreatePropertyDto } from './dto/create-property.dto';
-import { UpdatePropertyDto, UpdateStatusDTO } from './dto/update-property.dto';
+import { UpdatePropertyDto } from './dto/update-property.dto';
 import { ContractEventPayload, EventLog, Log, ethers } from 'ethers';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -19,6 +19,7 @@ import {
 import { QueryFilterProperty } from './dto/query-filter.dto';
 import { abiXtatuz } from 'src/constants/abiXtatuz';
 import * as AWS from 'aws-sdk';
+import { amount, dateToTimestamp } from 'src/shared/utils/calculate';
 
 @Injectable()
 export class PropertiesService {
@@ -54,6 +55,7 @@ export class PropertiesService {
       financial,
       total_raise,
       start_presale,
+      end_presale,
       total_supply,
       link_doc,
       detail,
@@ -111,6 +113,11 @@ export class PropertiesService {
       }
     }
 
+    // const startDate = dayjs(start_presale).unix();
+    const startDate = new Date(Number(start_presale) * 1000);
+    const endDate = new Date(Number(end_presale) * 1000);
+    // const endDate = dayjs(end_presale).unix();
+
     const createProperty = this.propertyRepository.create({
       propertyName: property_name,
       userId: user_id,
@@ -120,7 +127,8 @@ export class PropertiesService {
       financial: propertyFinancial,
       status: PropertyStatus.WAITING,
       totalRaise: total_raise,
-      startPresale: start_presale,
+      startPresale: startDate,
+      endPresale: endDate,
       totalSupply: total_supply,
       linkDoc: link_doc,
       detail: detail,
@@ -223,8 +231,16 @@ export class PropertiesService {
     return paginate<Property>(propertyBuilder, options);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} property`;
+  async findOne(id: number) {
+    const property = await this.propertyRepository.findOne({
+      where: {
+        id: id,
+      },
+    });
+    if (!property) {
+      throw new Error('property not found');
+    }
+    return property;
   }
 
   async update(
@@ -240,6 +256,7 @@ export class PropertiesService {
       financial,
       total_raise,
       start_presale,
+      end_presale,
       total_supply,
       link_doc,
       detail,
@@ -259,11 +276,7 @@ export class PropertiesService {
       token_id,
     } = updatePropertyDto;
 
-    const property = await this.propertyRepository.findOne({
-      where: {
-        id: id,
-      },
-    });
+    const property = await this.findOne(id);
     if (!property) {
       throw new Error('property not found');
     }
@@ -331,7 +344,7 @@ export class PropertiesService {
 
     const filedImg: any = [];
 
-    if (files) {
+    if (files.length) {
       for (const file of files) {
         const { originalname } = file;
 
@@ -345,17 +358,28 @@ export class PropertiesService {
       }
     }
 
+    let startDate;
+    let endDate;
+
+    if (start_presale) {
+      startDate = new Date(Number(start_presale) * 1000);
+    }
+
+    if (end_presale) {
+      endDate = new Date(Number(end_presale) * 1000);
+    }
     await this.propertyRepository
       .createQueryBuilder()
       .update()
       .set({
         propertyName: property_name,
         userId: user_id,
-        img: filedImg,
+        img: files.length ? filedImg : property.img,
         issuer: issuer,
         underlyingAsset: underlying_asset,
         totalRaise: total_raise,
-        startPresale: start_presale,
+        startPresale: startDate,
+        endPresale: endDate,
         totalSupply: total_supply,
         linkDoc: link_doc,
         detail: detail,
@@ -377,14 +401,13 @@ export class PropertiesService {
     return `This action updates a #${id} property`;
   }
 
-  async updateStatusProperty(id: number, status: UpdateStatusDTO) {
-    const data = { status };
+  async updateStatusProperty(id: number, status: string) {
     const property = await this.propertyRepository.findOne({ where: { id } });
     if (!property) {
       throw new Error('property not found');
     }
 
-    if (data.status.status === PropertyStatus.DEPLOYED) {
+    if (status === PropertyStatus.DEPLOYED) {
       await this.propertyRepository
         .createQueryBuilder()
         .update()
@@ -393,7 +416,7 @@ export class PropertiesService {
         })
         .where('id = :id', { id })
         .execute();
-    } else if (data.status.status === PropertyStatus.REFUND) {
+    } else if (status === PropertyStatus.REFUND) {
       await this.propertyRepository
         .createQueryBuilder()
         .update()
@@ -402,7 +425,7 @@ export class PropertiesService {
         })
         .where('id = :id', { id })
         .execute();
-    } else if (data.status.status === PropertyStatus.SUCCESS) {
+    } else if (status === PropertyStatus.SUCCESS) {
       await this.propertyRepository
         .createQueryBuilder()
         .update()
@@ -411,7 +434,7 @@ export class PropertiesService {
         })
         .where('id = :id', { id })
         .execute();
-    } else if (data.status.status === PropertyStatus.WAITING) {
+    } else if (status === PropertyStatus.WAITING) {
       await this.propertyRepository
         .createQueryBuilder()
         .update()
@@ -422,7 +445,7 @@ export class PropertiesService {
         .execute();
     }
     return {
-      message: `Property status is ${data.status.status}, update success!`,
+      message: `Property status is ${status}, update success!`,
     };
   }
 
@@ -430,12 +453,12 @@ export class PropertiesService {
     return `This action removes a #${id} property`;
   }
 
-  async getTokenContract() {
+  async getContract() {
     const provider = new ethers.JsonRpcProvider(process.env.API_RPC_PROVIDER);
 
     const wallet = new ethers.Wallet(process.env.API_PRIVATE_KEY);
     const signer = wallet.connect(provider);
-    return await new ethers.Contract(
+    return new ethers.Contract(
       process.env.API_CONTRACT_ADDRESS,
       abiXtatuz,
       signer,
@@ -443,17 +466,21 @@ export class PropertiesService {
   }
 
   async getEventLog(ownerAddress: string) {
-    const token = await this.getTokenContract();
+    const contract = await this.getContract();
 
     return new Promise(async (resolve, reject) => {
-      //to do filter by ownerAddress
-      const filter = token.filters.CreateProjectSuccess(null, null, null, null);
+      const filter = contract.filters.CreateProjectSuccess(
+        null,
+        null,
+        null,
+        null,
+      );
 
-      await token.on(filter, (txEvent: ContractEventPayload) => {
+      await contract.on(filter, (txEvent: ContractEventPayload) => {
         const log: EventLog = txEvent.log;
         const [_projectId, _ownerAddress, _propertyAddress, _tokenAddress] =
           log.args;
-        if (_ownerAddress == ownerAddress) {
+        if (String(_ownerAddress).toLowerCase() == ownerAddress.toLowerCase()) {
           resolve(txEvent.log);
         }
       });
@@ -465,7 +492,7 @@ export class PropertiesService {
     fromBlock: number,
     toBlock: number,
   ) {
-    const token = await this.getTokenContract();
+    const token = await this.getContract();
     const filter = token.filters.CreateProjectSuccess(
       null,
       ownerAddress,
@@ -480,11 +507,11 @@ export class PropertiesService {
   }
 
   async getEventLogBooking(ownerAddress: string) {
-    const token = await this.getTokenContract();
+    const contract = await this.getContract();
 
     return new Promise(async (resolve, reject) => {
-      const filter = token.filters.BookingSuccess(null, null, null);
-      await token.on(filter, (txEvent: ContractEventPayload) => {
+      const filter = contract.filters.BookingSuccess(null, null, null);
+      await contract.on(filter, (txEvent: ContractEventPayload) => {
         const log: EventLog = txEvent.log;
         const [projectId, sender, bookingTotalPrice] = log.args;
         if (sender == ownerAddress) {
@@ -499,9 +526,9 @@ export class PropertiesService {
     fromBlock: number,
     toBlock: number,
   ) {
-    const token = await this.getTokenContract();
-    const filter = token.filters.BookingSuccess(null, null, null);
-    await token
+    const contract = await this.getContract();
+    const filter = contract.filters.BookingSuccess(null, null, null);
+    await contract
       .queryFilter(filter, Number(fromBlock), Number(toBlock))
       .then((res: (EventLog | Log)[]) => {
         res;
@@ -509,12 +536,12 @@ export class PropertiesService {
   }
 
   async getEventLogClaim(ownerAddress: string) {
-    const token = await this.getTokenContract();
+    const contract = await this.getContract();
 
     return new Promise(async (resolve, reject) => {
-      const filter = token.filters.Claim(null, null, null);
+      const filter = contract.filters.Claim(null, null, null);
 
-      await token.on(filter, (txEvent: ContractEventPayload) => {
+      await contract.on(filter, (txEvent: ContractEventPayload) => {
         const log: EventLog = txEvent.log;
         const [isOwner, sender, tokenAddress, amount] = log.args;
         if (sender == ownerAddress) {
@@ -529,9 +556,9 @@ export class PropertiesService {
     fromBlock: number,
     toBlock: number,
   ) {
-    const token = await this.getTokenContract();
-    const filter = token.filters.Claim(null, null, null);
-    await token
+    const contract = await this.getContract();
+    const filter = contract.filters.Claim(null, null, null);
+    await contract
       .queryFilter(filter, Number(fromBlock), Number(toBlock))
       .then((res: (EventLog | Log)[]) => {
         res;
@@ -539,12 +566,12 @@ export class PropertiesService {
   }
 
   async getEventLogRefund(ownerAddress: string) {
-    const token = await this.getTokenContract();
+    const contract = await this.getContract();
 
     return new Promise(async (resolve, reject) => {
-      const filter = token.filters.Refund(null, null, null);
+      const filter = contract.filters.Refund(null, null, null);
 
-      await token.on(filter, (txEvent: ContractEventPayload) => {
+      await contract.on(filter, (txEvent: ContractEventPayload) => {
         const log: EventLog = txEvent.log;
         const [sender, projectId, amount] = log.args;
         if (sender == ownerAddress) {
@@ -559,12 +586,63 @@ export class PropertiesService {
     fromBlock: number,
     toBlock: number,
   ) {
-    const token = await this.getTokenContract();
-    const filter = token.filters.Refund(null, null, null);
-    await token
+    const contract = await this.getContract();
+    const filter = contract.filters.Refund(null, null, null);
+    await contract
       .queryFilter(filter, Number(fromBlock), Number(toBlock))
       .then((res: (EventLog | Log)[]) => {
         res;
       });
+  }
+
+  async deployProperty(id: number, walletAddress: string) {
+    const property = await this.propertyRepository.findOne({
+      where: {
+        id: id,
+      },
+      relations: ['token'],
+    });
+    if (!property) {
+      throw new Error('property not found');
+    }
+
+    const contract = await this.getContract();
+    const dateStartPresale = dateToTimestamp(property.startPresale);
+    const dateEndPresale = dateToTimestamp(property.endPresale);
+
+    const tokenProperty = await this.tokenRepository.findOne({
+      where: {
+        id: property.token.id,
+      },
+    });
+
+    const [resultCreate, resultEventLog]: any = await Promise.all([
+      await contract.createProject(
+        [
+          property.propertyName,
+          dateStartPresale,
+          dateEndPresale,
+          amount(`${property.tokenPrice}`, property.token.decimal),
+          amount(`${property.totalRaise}`, property.token.decimal),
+        ],
+        [tokenProperty.name, tokenProperty.symbol],
+        walletAddress,
+      ),
+      await this.getEventLog(walletAddress),
+    ]);
+
+    await this.propertyRepository
+      .createQueryBuilder()
+      .update()
+      .where('id = :id', { id })
+      .set({
+        blockNumber: `${resultEventLog.blockNumber}`,
+        contractId: `${Number(resultEventLog.args[0])}`,
+      })
+      .execute();
+
+    await this.updateStatusProperty(id, PropertyStatus.DEPLOYED);
+
+    return `Deploy a #${id} property to smart contract is success`;
   }
 }

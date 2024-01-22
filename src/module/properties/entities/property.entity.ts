@@ -29,8 +29,8 @@ export class Property extends BaseEntity {
   @Column({ name: 'userId', nullable: true })
   userId: string;
 
-  @Column({ type: 'json' })
-  img: { name: string; path: string };
+  @Column()
+  img: string;
 
   @Column({ nullable: true })
   issuer: string;
@@ -53,6 +53,9 @@ export class Property extends BaseEntity {
 
   @Column({ nullable: true, type: 'timestamptz', name: 'startPresale' })
   startPresale: Date;
+
+  @Column({ nullable: true, type: 'timestamptz', name: 'endPresale' })
+  endPresale: Date;
 
   @Column({ name: 'totalSupply', nullable: true })
   totalSupply: number;
@@ -98,6 +101,12 @@ export class Property extends BaseEntity {
 
   @Column({ name: 'tokenPrice', nullable: true }) //price_per_token
   tokenPrice: number;
+
+  @Column({ nullable: true })
+  blockNumber: string;
+
+  @Column({ nullable: true })
+  contractId: string;
 
   @OneToMany(() => PropertyFeature, (id) => id.property)
   propertyFeatures: PropertyFeature[];

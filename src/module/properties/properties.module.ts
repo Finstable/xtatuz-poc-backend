@@ -7,6 +7,7 @@ import { Financial } from './entities/financial.entity';
 import { NearLocation } from './entities/near_location.entity';
 import { Token } from '../token/entities/token.entity';
 import { PropertyFeature } from '../property-feature/entities/property-feature.entity';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -17,8 +18,9 @@ import { PropertyFeature } from '../property-feature/entities/property-feature.e
       NearLocation,
       Token,
     ]),
+    JwtModule.register({}),
   ],
   controllers: [PropertiesController],
-  providers: [PropertiesService],
+  providers: [PropertiesService, JwtService],
 })
 export class PropertiesModule {}
