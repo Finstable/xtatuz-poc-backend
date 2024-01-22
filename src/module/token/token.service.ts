@@ -16,7 +16,11 @@ export class TokenService {
   }
 
   findAll() {
-    const tokens = this.tokenRepository.find();
+    const tokens = this.tokenRepository.find({
+      relations: {
+        chain: true,
+      },
+    });
     return tokens;
   }
 

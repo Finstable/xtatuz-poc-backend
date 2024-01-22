@@ -17,7 +17,11 @@ export class ChainsService {
   }
 
   findAll() {
-    const chains = this.chainRepo.find();
+    const chains = this.chainRepo.find({
+      relations: {
+        token: true,
+      },
+    });
     return chains;
   }
 
