@@ -6,12 +6,36 @@ import {
   IsString,
 } from 'class-validator';
 import {
-  PropertyConstructStatus,
+  PropertyCompletion,
   PropertyStatus,
   PropertyType,
 } from 'src/shared/enum/types';
 
 export class CreatePropertyDto {
+  @IsString()
+  @IsOptional()
+  company_name: string;
+
+  @IsString()
+  @IsOptional()
+  issuer_name: string;
+
+  @IsString()
+  @IsOptional()
+  mobile_number: string;
+
+  @IsString()
+  @IsOptional()
+  email_address: string;
+
+  @IsString()
+  @IsOptional()
+  lot_size: string;
+
+  @IsString()
+  @IsOptional()
+  interior_size: string;
+
   @IsString()
   @IsNotEmpty()
   property_name: string;
@@ -24,9 +48,9 @@ export class CreatePropertyDto {
   @IsOptional()
   img: string[];
 
-  @IsString()
-  @IsNotEmpty()
-  issuer: string;
+  @IsNumber()
+  @IsOptional()
+  expect_income: number;
 
   @IsString()
   @IsNotEmpty()
@@ -42,6 +66,10 @@ export class CreatePropertyDto {
   @IsNumber()
   @IsOptional()
   total_raise: number;
+
+  @IsNumber()
+  @IsOptional()
+  total_investment: number;
 
   @IsOptional()
   start_presale: Date;
@@ -61,15 +89,9 @@ export class CreatePropertyDto {
   @IsOptional()
   detail: string;
 
-  @IsNotEmpty()
-  longitude: number;
-
-  @IsNotEmpty()
-  latitude: number;
-
   @IsString()
   @IsNotEmpty()
-  location_name: string;
+  location_link: string;
 
   @IsOptional()
   near_location: NearLocation[];
@@ -96,11 +118,11 @@ export class CreatePropertyDto {
 
   @IsString()
   @IsOptional()
-  type: PropertyType;
+  property_type: PropertyType;
 
   @IsString()
   @IsOptional()
-  property_construct_status: PropertyConstructStatus;
+  property_completion_status: PropertyCompletion;
 
   @IsNumber()
   @IsNotEmpty()

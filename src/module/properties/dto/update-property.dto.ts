@@ -2,19 +2,42 @@ import { PartialType } from '@nestjs/mapped-types';
 import { CreatePropertyDto } from './create-property.dto';
 import {
   IsArray,
-  IsEnum,
   IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
 } from 'class-validator';
 import {
-  PropertyConstructStatus,
+  PropertyCompletion,
   PropertyStatus,
   PropertyType,
 } from 'src/shared/enum/types';
 
 export class UpdatePropertyDto extends PartialType(CreatePropertyDto) {
+  @IsString()
+  @IsOptional()
+  company_name: string;
+
+  @IsString()
+  @IsOptional()
+  issuer_name: string;
+
+  @IsString()
+  @IsOptional()
+  mobile_number: string;
+
+  @IsString()
+  @IsOptional()
+  email_address: string;
+
+  @IsString()
+  @IsOptional()
+  lot_size: string;
+
+  @IsString()
+  @IsOptional()
+  interior_size: string;
+
   @IsString()
   @IsOptional()
   property_name: string;
@@ -27,9 +50,9 @@ export class UpdatePropertyDto extends PartialType(CreatePropertyDto) {
   @IsOptional()
   img: string[];
 
-  @IsString()
+  @IsNumber()
   @IsOptional()
-  issuer: string;
+  expect_income: number;
 
   @IsString()
   @IsOptional()
@@ -45,6 +68,10 @@ export class UpdatePropertyDto extends PartialType(CreatePropertyDto) {
   @IsNumber()
   @IsOptional()
   total_raise: number;
+
+  @IsNumber()
+  @IsOptional()
+  total_investment: number;
 
   @IsOptional()
   start_presale: Date;
@@ -64,15 +91,9 @@ export class UpdatePropertyDto extends PartialType(CreatePropertyDto) {
   @IsOptional()
   detail: string;
 
-  @IsOptional()
-  longitude: number;
-
-  @IsOptional()
-  latitude: number;
-
   @IsString()
   @IsOptional()
-  location_name: string;
+  location_link: string;
 
   @IsOptional()
   near_location: NearLocation[];
@@ -99,11 +120,11 @@ export class UpdatePropertyDto extends PartialType(CreatePropertyDto) {
 
   @IsString()
   @IsOptional()
-  type: PropertyType;
+  property_type: PropertyType;
 
   @IsString()
   @IsOptional()
-  property_construct_status: PropertyConstructStatus;
+  property_completion_status: PropertyCompletion;
 
   @IsNumber()
   @IsOptional()
