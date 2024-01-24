@@ -40,7 +40,6 @@ export class ChainsController {
     return this.chainsService.remove(+id);
   }
 
-  //findOneByChainId
   @Get(':id/tokens')
   findOneByChainId(@Param('id') id: string) {
     return this.chainsService.findOneByChainId(+id);
