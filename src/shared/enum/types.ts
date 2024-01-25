@@ -5,7 +5,7 @@ export enum PropertyStatus {
   SUCCESS = 'success',
 }
 
-export enum PropertyConstructStatus {
+export enum PropertyCompletion {
   COMPLETE = 'complete',
   INCOMPLETE = 'incomplete',
   EMPTY = 'empty',

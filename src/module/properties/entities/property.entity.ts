@@ -3,7 +3,7 @@ import { PropertyFeature } from 'src/module/property-feature/entities/property-f
 import { Token } from 'src/module/token/entities/token.entity';
 import { User } from 'src/module/users/entities/user.entity';
 import {
-  PropertyConstructStatus,
+  PropertyCompletion,
   PropertyStatus,
   PropertyType,
 } from 'src/shared/enum/types';
@@ -24,7 +24,25 @@ import { NearLocation } from './near_location.entity';
 @Entity({ name: 'property' })
 export class Property extends BaseEntity {
   @Column({ nullable: true })
+  companyName: string;
+
+  @Column({ nullable: true })
+  issuerName: string;
+
+  @Column({ nullable: true })
+  mobileNumber: string;
+
+  @Column({ nullable: true })
   propertyName: string;
+
+  @Column({ nullable: true })
+  emailAddress: string;
+
+  @Column({ nullable: true })
+  lotSize: string;
+
+  @Column({ nullable: true })
+  interiorSize: string;
 
   @Column({ name: 'userId', nullable: true })
   userId: string;
@@ -32,8 +50,8 @@ export class Property extends BaseEntity {
   @Column()
   img: string;
 
-  @Column({ nullable: true })
-  issuer: string;
+  @Column({ type: 'numeric', nullable: true })
+  expectIncome: number;
 
   @Column({ name: 'underlyingAsset', nullable: true })
   underlyingAsset: string;
@@ -51,6 +69,9 @@ export class Property extends BaseEntity {
   @Column({ name: 'totalRaise', nullable: true })
   totalRaise: number;
 
+  @Column({ name: 'totalInvestment', nullable: true })
+  totalInvestment: number;
+
   @Column({ nullable: true, type: 'timestamptz', name: 'startPresale' })
   startPresale: Date;
 
@@ -66,14 +87,8 @@ export class Property extends BaseEntity {
   @Column({ name: 'detail', nullable: true })
   detail: string;
 
-  @Column({ type: 'numeric', name: 'latitude', nullable: true })
-  latitude: number;
-
-  @Column({ type: 'numeric', name: 'longitude', nullable: true })
-  longitude: number;
-
-  @Column({ name: 'locationName', nullable: true })
-  locationName: string;
+  @Column({ name: 'locationLink', nullable: true })
+  locationLink: string;
 
   @OneToMany(() => NearLocation, (id) => id.property)
   nearLocation: NearLocation[];
@@ -94,10 +109,10 @@ export class Property extends BaseEntity {
   country: string;
 
   @Column({ nullable: true })
-  type: PropertyType;
+  propertyType: PropertyType;
 
   @Column({ nullable: true })
-  propertyConstructStatus: PropertyConstructStatus;
+  propertyCompletion: PropertyCompletion;
 
   @Column({ name: 'tokenPrice', nullable: true }) //price_per_token
   tokenPrice: number;

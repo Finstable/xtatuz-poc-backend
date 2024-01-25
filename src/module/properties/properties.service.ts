@@ -53,28 +53,33 @@ export class PropertiesService {
     files: Array<Express.Multer.File>,
   ) {
     const {
+      company_name,
+      issuer_name,
+      mobile_number,
+      email_address,
+      lot_size,
+      interior_size,
       property_name,
       user_id,
-      issuer,
+      expect_income,
       underlying_asset,
       financial,
       total_raise,
       start_presale,
       end_presale,
       total_supply,
+      total_investment,
       link_doc,
       detail,
-      longitude,
-      latitude,
-      location_name,
+      location_link,
       near_location,
       onchain_id,
       note,
       address_property,
       city,
       country,
-      type,
-      property_construct_status,
+      property_type,
+      property_completion_status,
       token_price,
       property_features,
       token_id,
@@ -125,29 +130,34 @@ export class PropertiesService {
       // const endDate = dayjs(end_presale).unix();
 
       const createProperty = this.propertyRepository.create({
+        companyName: company_name,
+        issuerName: issuer_name,
+        mobileNumber: mobile_number,
+        emailAddress: email_address,
+        lotSize: lot_size,
+        interiorSize: interior_size,
+        expectIncome: expect_income,
         propertyName: property_name,
         userId: user_id,
         img: filedImg,
-        issuer: issuer,
         underlyingAsset: underlying_asset,
         financial: propertyFinancial,
         status: PropertyStatus.WAITING,
         totalRaise: total_raise,
+        totalInvestment: total_investment,
         startPresale: startDate,
         endPresale: endDate,
         totalSupply: total_supply,
         linkDoc: link_doc,
         detail: detail,
-        latitude: latitude,
-        longitude: longitude,
-        locationName: location_name,
+        locationLink: location_link,
         onchainId: onchain_id,
         note: note,
         addressProperty: address_property,
         city: city,
         country: country,
-        type: type,
-        propertyConstructStatus: property_construct_status,
+        propertyType: property_type,
+        propertyCompletion: property_completion_status,
         tokenPrice: token_price,
         token: token,
       });
@@ -215,25 +225,25 @@ export class PropertiesService {
       });
     }
 
-    if (queryFilterProperty.property_construct_status) {
+    if (queryFilterProperty.property_completion_status) {
       propertyBuilder.andWhere(
         'property.propertyConstructStatus = :propertyConstructStatus',
         {
           propertyConstructStatus:
-            queryFilterProperty.property_construct_status,
+            queryFilterProperty.property_completion_status,
         },
       );
     }
 
-    if (queryFilterProperty.type) {
+    if (queryFilterProperty.property_type) {
       propertyBuilder.andWhere('property.type = :type', {
-        type: queryFilterProperty.type,
+        type: queryFilterProperty.property_type,
       });
     }
 
-    if (queryFilterProperty.status) {
+    if (queryFilterProperty.property_status) {
       propertyBuilder.andWhere('property.status = :status', {
-        status: queryFilterProperty.status,
+        status: queryFilterProperty.property_status,
       });
     }
 
@@ -258,28 +268,33 @@ export class PropertiesService {
     files: Array<Express.Multer.File>,
   ) {
     const {
+      company_name,
+      issuer_name,
+      mobile_number,
+      email_address,
+      lot_size,
+      interior_size,
       property_name,
       user_id,
-      issuer,
+      expect_income,
       underlying_asset,
       financial,
       total_raise,
       start_presale,
       end_presale,
       total_supply,
+      total_investment,
       link_doc,
       detail,
-      longitude,
-      latitude,
-      location_name,
+      location_link,
       near_location,
       onchain_id,
       note,
       address_property,
       city,
       country,
-      type,
-      property_construct_status,
+      property_type,
+      property_completion_status,
       token_price,
       property_features,
       token_id,
@@ -382,27 +397,32 @@ export class PropertiesService {
         .createQueryBuilder()
         .update()
         .set({
+          companyName: company_name,
+          issuerName: issuer_name,
+          mobileNumber: mobile_number,
+          emailAddress: email_address,
+          lotSize: lot_size,
+          interiorSize: interior_size,
+          expectIncome: expect_income,
           propertyName: property_name,
           userId: user_id,
           img: files.length ? filedImg : property.img,
-          issuer: issuer,
           underlyingAsset: underlying_asset,
           totalRaise: total_raise,
+          totalInvestment: total_investment,
           startPresale: startDate,
           endPresale: endDate,
           totalSupply: total_supply,
           linkDoc: link_doc,
           detail: detail,
-          latitude: latitude,
-          longitude: longitude,
-          locationName: location_name,
+          locationLink: location_link,
           onchainId: onchain_id,
           note: note,
           addressProperty: address_property,
           city: city,
           country: country,
-          type: type,
-          propertyConstructStatus: property_construct_status,
+          propertyType: property_type,
+          propertyCompletion: property_completion_status,
           tokenPrice: token_price,
         })
         .where('id = :id', { id })
