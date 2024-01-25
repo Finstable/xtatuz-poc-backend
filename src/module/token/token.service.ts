@@ -4,6 +4,12 @@ import { UpdateTokenDto } from './dto/update-token.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Token } from './entities/token.entity';
 import { Repository } from 'typeorm';
+import { QueryFilterTokens } from './dto/query-token.dto';
+import {
+  IPaginateOptions,
+  IPaginationMeta,
+  paginate,
+} from 'src/shared/utils/pagination';
 
 @Injectable()
 export class TokenService {
@@ -15,13 +21,21 @@ export class TokenService {
     return 'This action adds a new token';
   }
 
-  findAll() {
-    const tokens = this.tokenRepository.find({
-      relations: {
-        chain: true,
-      },
-    });
-    return tokens;
+  async listTokens(
+    options: IPaginateOptions,
+    queryFilterToken: QueryFilterTokens,
+  ): Promise<IPaginationMeta<Token>> {
+    const tokensBuilder = await this.tokenRepository
+      .createQueryBuilder('token')
+      .leftJoinAndSelect('token.chain', 'chain.id');
+
+    if (queryFilterToken.id) {
+      tokensBuilder.andWhere('token.id = :id', {
+        id: queryFilterToken.id,
+      });
+    }
+
+    return paginate<Token>(tokensBuilder, options);
   }
 
   findOne(id: number) {

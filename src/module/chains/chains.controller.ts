@@ -6,10 +6,13 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { ChainsService } from './chains.service';
 import { CreateChainDto } from './dto/create-chain.dto';
 import { UpdateChainDto } from './dto/update-chain.dto';
+import { QueryFilterChains } from './dto/query-chain.dto';
+import { IPaginateOptions } from 'src/shared/utils/pagination';
 
 @Controller('chains')
 export class ChainsController {
@@ -21,8 +24,12 @@ export class ChainsController {
   }
 
   @Get('/listChain')
-  findAll() {
-    return this.chainsService.findAll();
+  listChain(@Query() queryChains: QueryFilterChains) {
+    const options: IPaginateOptions = {
+      page: queryChains.page,
+      limit: queryChains.limit,
+    };
+    return this.chainsService.listChain(options, queryChains);
   }
 
   @Get(':id')
