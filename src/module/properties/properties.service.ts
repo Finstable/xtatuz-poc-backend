@@ -255,6 +255,7 @@ export class PropertiesService {
       where: {
         id: id,
       },
+      relations: ['token', 'propertyFeatures', 'financial', 'nearLocation'],
     });
     if (!property) {
       throw new Error('property not found');

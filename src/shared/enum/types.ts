@@ -6,7 +6,7 @@ export enum PropertyStatus {
 }
 
 export enum PropertyCompletion {
-  COMPLETE = 'complete',
+  COMPLETE = 'completed',
   INCOMPLETE = 'incomplete',
   EMPTY = 'empty',
 }
