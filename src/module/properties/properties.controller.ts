@@ -100,7 +100,6 @@ export class PropertiesController {
   }
 
   @Get('/listProperties')
-  @UseGuards(AuthGuard)
   listProperties(@Query() queryProperty: QueryFilterProperty) {
     const options: IPaginateOptions = {
       page: queryProperty.page,
