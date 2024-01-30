@@ -47,8 +47,11 @@ export class Property extends BaseEntity {
   @Column({ name: 'userId', nullable: true })
   userId: string;
 
-  @Column()
-  img: string;
+  @Column('text', {
+    array: true,
+    default: [],
+  })
+  img: string[];
 
   @Column({ type: 'numeric', nullable: true })
   expectIncome: number;
