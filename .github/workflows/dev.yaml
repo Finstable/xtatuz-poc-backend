@@ -24,9 +24,9 @@ jobs:
           echo $'JWT_REFRESH=${{secrets.JWT_REFRESH}}\n' >> .env
           echo $'SECRET_EXPIRES_IN=${{secrets.SECRET_EXPIRES_IN}}\n' >> .env
           echo $'REFRESH_EXPIRES_IN=${{secrets.REFRESH_EXPIRES_IN}}\n' >> .env
-          echo $'API_RPC_PROVIDER=${{secrets.API_RPC_PROVIDER}}\n' >> .env
-          echo $'API_PRIVATE_KEY=${{secrets.API_PRIVATE_KEY}}\n' >> .env
-          echo $'API_CONTRACT_ADDRESS=${{secrets.API_CONTRACT_ADDRESS}}\n' >> .env
+          echo $'RPC_PROVIDER=${{secrets.RPC_PROVIDER}}\n' >> .env
+          echo $'PRIVATE_KEY=${{secrets.PRIVATE_KEY}}\n' >> .env
+          echo $'CONTRACT_ADDRESS=${{secrets.CONTRACT_ADDRESS}}\n' >> .env
           echo $'AWS_S3_BUCKET_NAME=${{secrets.AWS_S3_BUCKET_NAME}}\n' >> .env
           echo $'AWS_ACCESS_KEY_ID=${{secrets.AWS_ACCESS_KEY_ID}}\n' >> .env
           echo $'AWS_SECRET_ACCESS_KEY=${{secrets.AWS_SECRET_ACCESS_KEY}}\n' >> .env
