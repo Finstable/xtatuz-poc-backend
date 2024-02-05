@@ -216,8 +216,10 @@ export class PropertiesService {
     options: IPaginateOptions,
     queryFilterProperty: QueryFilterProperty,
   ): Promise<IPaginationMeta<Property>> {
-    const propertyBuilder =
-      await this.propertyRepository.createQueryBuilder('property');
+    const propertyBuilder = await this.propertyRepository
+      .createQueryBuilder('property')
+      .leftJoinAndSelect('property.token', 'token')
+      .orderBy('property.id', 'ASC');
 
     if (queryFilterProperty.user_id) {
       propertyBuilder.andWhere('property.userId = :userId', {
