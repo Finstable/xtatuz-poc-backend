@@ -21,5 +21,5 @@ export class QueryFilterProperty extends BaseQueryDto {
 
   @IsString()
   @IsOptional()
-  property_status: PropertyStatus;
+  status: PropertyStatus;
 }
