@@ -193,7 +193,7 @@ export const abiXtatuz = [
     inputs: [
       {
         internalType: 'uint256',
-        name: 'propjectId',
+        name: 'projectId',
         type: 'uint256',
       },
     ],
@@ -205,6 +205,24 @@ export const abiXtatuz = [
         type: 'bool',
       },
     ],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: 'projectId',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: 'claimRound',
+        type: 'uint256',
+      },
+    ],
+    name: 'claimYeild',
+    outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
   },
@@ -359,6 +377,42 @@ export const abiXtatuz = [
         type: 'uint256',
       },
     ],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: 'projectId',
+        type: 'uint256',
+      },
+    ],
+    name: 'ownerClaim',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: 'projectId',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: 'date',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: 'amount',
+        type: 'uint256',
+      },
+    ],
+    name: 'ownerDepositYield',
+    outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
   },

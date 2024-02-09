@@ -243,9 +243,9 @@ export class PropertiesService {
       });
     }
 
-    if (queryFilterProperty.property_status) {
+    if (queryFilterProperty.status) {
       propertyBuilder.andWhere('property.status = :status', {
-        status: queryFilterProperty.property_status,
+        status: queryFilterProperty.status,
       });
     }
 
