@@ -105,6 +105,25 @@ export const abiXtatuz = [
     anonymous: false,
     inputs: [
       {
+        indexed: true,
+        internalType: 'address',
+        name: 'investorAddress',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'amount',
+        type: 'uint256',
+      },
+    ],
+    name: 'ClaimYieldSuccess',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
         indexed: false,
         internalType: 'uint256',
         name: 'projectId',
@@ -130,6 +149,44 @@ export const abiXtatuz = [
       },
     ],
     name: 'CreateProjectSuccess',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'amount',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'dateTimestamp',
+        type: 'uint256',
+      },
+    ],
+    name: 'EventOwnerDepositYield',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'ownerAddress',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'amount',
+        type: 'uint256',
+      },
+    ],
+    name: 'OwnerClaim',
     type: 'event',
   },
   {
@@ -215,13 +272,8 @@ export const abiXtatuz = [
         name: 'projectId',
         type: 'uint256',
       },
-      {
-        internalType: 'uint256',
-        name: 'claimRound',
-        type: 'uint256',
-      },
     ],
-    name: 'claimYeild',
+    name: 'claimYield',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
@@ -302,6 +354,71 @@ export const abiXtatuz = [
         type: 'uint256',
       },
     ],
+    name: 'getAmountYield',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: 'projectId',
+        type: 'uint256',
+      },
+      {
+        internalType: 'address',
+        name: 'investorAddress',
+        type: 'address',
+      },
+    ],
+    name: 'getBookingDetail',
+    outputs: [
+      {
+        components: [
+          {
+            internalType: 'uint256',
+            name: 'totalPrice',
+            type: 'uint256',
+          },
+          {
+            internalType: 'uint256',
+            name: 'totalToken',
+            type: 'uint256',
+          },
+          {
+            internalType: 'bool',
+            name: 'isClaim',
+            type: 'bool',
+          },
+          {
+            internalType: 'bool',
+            name: 'isRefund',
+            type: 'bool',
+          },
+        ],
+        internalType: 'struct HolderDetail',
+        name: '',
+        type: 'tuple',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: 'projectId',
+        type: 'uint256',
+      },
+    ],
     name: 'getProject',
     outputs: [
       {
@@ -321,8 +438,45 @@ export const abiXtatuz = [
             name: 'tokenAddress',
             type: 'address',
           },
+          {
+            internalType: 'uint256',
+            name: 'startSellingDate',
+            type: 'uint256',
+          },
+          {
+            internalType: 'uint256',
+            name: 'endSellingDate',
+            type: 'uint256',
+          },
+          {
+            internalType: 'string',
+            name: 'projectName',
+            type: 'string',
+          },
         ],
         internalType: 'struct ProjectDetail',
+        name: '',
+        type: 'tuple',
+      },
+      {
+        components: [
+          {
+            internalType: 'uint256',
+            name: 'totalSupply',
+            type: 'uint256',
+          },
+          {
+            internalType: 'uint256',
+            name: 'totalBought',
+            type: 'uint256',
+          },
+          {
+            internalType: 'uint256',
+            name: 'tokenPrice',
+            type: 'uint256',
+          },
+        ],
+        internalType: 'struct TokenDetail',
         name: '',
         type: 'tuple',
       },
@@ -383,6 +537,25 @@ export const abiXtatuz = [
   {
     inputs: [
       {
+        internalType: 'address',
+        name: 'userAddress',
+        type: 'address',
+      },
+    ],
+    name: 'investorProjects',
+    outputs: [
+      {
+        internalType: 'uint256[]',
+        name: '',
+        type: 'uint256[]',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
         internalType: 'uint256',
         name: 'projectId',
         type: 'uint256',
@@ -398,11 +571,6 @@ export const abiXtatuz = [
       {
         internalType: 'uint256',
         name: 'projectId',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint256',
-        name: 'date',
         type: 'uint256',
       },
       {
@@ -430,6 +598,51 @@ export const abiXtatuz = [
     type: 'function',
   },
   {
+    inputs: [],
+    name: 'projectList',
+    outputs: [
+      {
+        components: [
+          {
+            internalType: 'address',
+            name: 'ownerAddress',
+            type: 'address',
+          },
+          {
+            internalType: 'address',
+            name: 'propertyAddress',
+            type: 'address',
+          },
+          {
+            internalType: 'address',
+            name: 'tokenAddress',
+            type: 'address',
+          },
+          {
+            internalType: 'uint256',
+            name: 'startSellingDate',
+            type: 'uint256',
+          },
+          {
+            internalType: 'uint256',
+            name: 'endSellingDate',
+            type: 'uint256',
+          },
+          {
+            internalType: 'string',
+            name: 'projectName',
+            type: 'string',
+          },
+        ],
+        internalType: 'struct ProjectDetail[]',
+        name: '',
+        type: 'tuple[]',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
     inputs: [
       {
         internalType: 'uint256',
@@ -440,6 +653,19 @@ export const abiXtatuz = [
     name: 'refund',
     outputs: [],
     stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'tokens',
+    outputs: [
+      {
+        internalType: 'address[]',
+        name: '_tokens',
+        type: 'address[]',
+      },
+    ],
+    stateMutability: 'view',
     type: 'function',
   },
 ];
