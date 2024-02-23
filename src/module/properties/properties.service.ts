@@ -249,6 +249,12 @@ export class PropertiesService {
       });
     }
 
+    if (queryFilterProperty.contractId) {
+      propertyBuilder.andWhere('property.contractId = :contractId', {
+        contractId: queryFilterProperty.contractId,
+      });
+    }
+
     return paginate<Property>(propertyBuilder, options);
   }
 
