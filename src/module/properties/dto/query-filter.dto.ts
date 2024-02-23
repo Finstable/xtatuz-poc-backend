@@ -22,4 +22,8 @@ export class QueryFilterProperty extends BaseQueryDto {
   @IsString()
   @IsOptional()
   status: PropertyStatus;
+
+  @IsString()
+  @IsOptional()
+  contractId: string;
 }
