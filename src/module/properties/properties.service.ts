@@ -102,11 +102,17 @@ export class PropertiesService {
         where: {
           id: token_id,
         },
+        relations: {
+          chain: true,
+        },
       });
 
       if (!token) {
-        throw new Error(`can not create property whit token id ${token_id}`);
+        throw new Error(`can not create property with token id ${token_id}`);
       }
+
+      if (Number(token.chain.id) !== Number(onchain_id))
+        throw new Error(`can not create property invalid chain id `);
 
       const filedImg: any = [];
 
@@ -646,6 +652,7 @@ export class PropertiesService {
       const property = await this.propertyRepository.findOne({
         where: {
           id: id,
+          status: PropertyStatus.WAITING,
         },
         relations: ['token'],
       });
@@ -673,6 +680,12 @@ export class PropertiesService {
         throw new BadRequestException(`Invalid Start Presale!`);
       }
 
+      const tokenSymbol = property.propertyName
+        .trim()
+        .split(' ')
+        .map((word, index) => (index <= 2 ? word[0].toUpperCase() : ''))
+        .join('');
+
       const [resultCreate, resultEventLog]: any = await Promise.all([
         await contract.createProject(
           [
@@ -681,8 +694,9 @@ export class PropertiesService {
             dateEndPresale,
             amount(`${property.tokenPrice}`, property.token.decimal),
             amount(`${property.totalRaise}`, property.token.decimal),
+            tokenProperty.tokenAddress,
           ],
-          [tokenProperty.name, tokenProperty.symbol],
+          [tokenSymbol, tokenSymbol],
           walletAddress,
         ),
         await this.getEventLog(walletAddress),
