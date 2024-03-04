@@ -35,8 +35,12 @@ export class PropertiesController {
   createProperty(
     @UploadedFiles() files: Array<Express.Multer.File>,
     @Body() createPropertyDto: CreatePropertyDto,
+    @GetAccessToken() { _id: user_id }: { _id: string },
   ) {
-    return this.propertiesService.create(createPropertyDto, files);
+    return this.propertiesService.create(
+      { ...createPropertyDto, user_id },
+      files,
+    );
   }
 
   @Patch(':id/updateProperty')
@@ -46,9 +50,13 @@ export class PropertiesController {
     @Param('id') id: string,
     @UploadedFiles() files: Array<Express.Multer.File>,
     @Body() updatePropertyDto: UpdatePropertyDto,
+    @GetAccessToken() { _id: user_id }: { _id: string },
   ) {
-    console.log('id', id);
-    return this.propertiesService.update(+id, updatePropertyDto, files);
+    return this.propertiesService.update(
+      +id,
+      { ...updatePropertyDto, user_id },
+      files,
+    );
   }
 
   @Patch(':id/updateStatusProperty')

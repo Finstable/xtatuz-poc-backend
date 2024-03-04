@@ -693,7 +693,7 @@ export class PropertiesService {
             dateStartPresale,
             dateEndPresale,
             amount(`${property.tokenPrice}`, property.token.decimal),
-            amount(`${property.totalRaise}`, property.token.decimal),
+            amount(`${property.totalSupply}`, property.token.decimal),
             tokenProperty.tokenAddress,
           ],
           [tokenSymbol, tokenSymbol],
